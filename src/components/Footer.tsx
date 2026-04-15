@@ -1,8 +1,9 @@
-import { Camera, Link2, Mail, MapPin } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { Link } from "react-router";
-import { useTheme } from "../context/ThemeContext";
 import Udark from "../assets/Dark Logo.png";
 import ULight from "../assets/Light Logo.png";
+import { useTheme } from "../context/ThemeContext";
 
 const Footer = () => {
   const { theme } = useTheme();
@@ -23,29 +24,32 @@ const Footer = () => {
             stakeholders through strategic foresight and innovative leadership.
           </p>
           <div className="flex gap-4">
-            <a
-              href="#"
+            <Link
+              to="https://web.facebook.com/ugopeters"
+              target="_blank"
               className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:border-gold hover:text-gold transition-all"
             >
-              <Mail size={18} />
-            </a>
-            <a
-              href="#"
+              <FaFacebook size={18} />
+            </Link>
+            <Link
+              to="https://www.linkedin.com/in/ugo-peters/"
+              target="_blank"
               className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:border-gold hover:text-gold transition-all"
             >
-              <Link2 size={18} />
-            </a>
-            <a
-              href="#"
+              <FaLinkedin size={18} />
+            </Link>
+            <Link
+              to="https://www.instagram.com/1b40_ng?igsh=MTgxN3lveWF4NDZpdg%3D%3D"
+              target="_blank"
               className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:border-gold hover:text-gold transition-all"
             >
-              <Camera size={18} />
-            </a>
+              <FaInstagram size={18} />
+            </Link>
           </div>
         </div>
 
         <div>
-          <h4 className="text-gold uppercase tracking-widest text-xs font-bold mb-6">
+          <h4 className="text-gold uppercase tracking-widest text-sm font-bold mb-6">
             Navigation
           </h4>
           <ul className="flex flex-col gap-4">
@@ -93,17 +97,19 @@ const Footer = () => {
         </div>
 
         <div className="col-span-2 max-small-mobile:col-span-1">
-          <h4 className="text-gold uppercase tracking-widest text-xs font-bold mb-6">
+          <h4 className="text-gold uppercase tracking-widest text-sm font-bold mb-6">
             Contact
           </h4>
           <ul className="flex flex-col gap-4">
-            <li className="flex items-center gap-3 text-foreground/70 text-sm">
-              <MapPin size={16} className="text-gold shrink-0" />
-              <span>Abuja, Nigeria</span>
+            <li className="flex items-start gap-3 text-foreground/70 text-sm">
+              <MapPin size={20} className="text-gold shrink-0" />
+              <span>
+                3 Portharcourt Crescent, Area 11, Garki, Abuja, Nigeria.
+              </span>
             </li>
             <li className="flex items-center gap-3 text-foreground/70 text-sm">
-              <Mail size={16} className="text-gold shrink-0" />
-              <span>executive@ugopeters.com</span>
+              <Mail size={20} className="text-gold shrink-0" />
+              <span>info@ugopeters.com</span>
             </li>
           </ul>
         </div>

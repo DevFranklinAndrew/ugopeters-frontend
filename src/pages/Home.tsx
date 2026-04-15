@@ -142,7 +142,7 @@ const Home = () => {
                 <img
                   src={image}
                   alt="Ugo Peters"
-                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                  className="w-full h-full object-cover grayscale hover:grayscale-0 max-medium-tablet:grayscale-0 transition-all duration-1000"
                   referrerPolicy="no-referrer"
                 />
               </div>

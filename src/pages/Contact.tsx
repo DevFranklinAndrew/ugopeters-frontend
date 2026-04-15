@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   return (
@@ -51,7 +52,7 @@ const Contact = () => {
               >
                 <div className="space-y-16 max-mobile:space-y-10">
                   <div>
-                    <h3 className="text-gold uppercase tracking-widest text-xs font-bold mb-8">
+                    <h3 className="text-gold uppercase tracking-widest font-bold mb-8">
                       Contact Details
                     </h3>
                     <div className="space-y-8">
@@ -60,18 +61,18 @@ const Contact = () => {
                           <Mail size={20} />
                         </div>
                         <div>
-                          <p className="text-[10px] uppercase tracking-widest font-bold text-foreground/40 mb-1">
+                          <p className="text-xs uppercase tracking-widest font-bold text-foreground/40 mb-1">
                             Executive Correspondence
                           </p>
                           <a
-                            href="mailto:executive@ugopeters.com"
+                            href="mailto:info@ugopeters.com"
                             className="text-2xl font-serif hover:text-gold transition-colors"
                           >
-                            executive@ugopeters.com
+                            info@ugopeters.com
                           </a>
                         </div>
                       </div>
-                      <div className="flex items-start gap-6 group">
+                      {/* <div className="flex items-start gap-6 group">
                         <div className="w-12 h-12 border border-gold/20 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-black transition-all shrink-0">
                           <Phone size={20} />
                         </div>
@@ -83,36 +84,49 @@ const Contact = () => {
                             +44 (0) 20 7946 0123
                           </p>
                         </div>
-                      </div>
+                      </div> */}
                       <div className="flex items-start gap-6 group">
                         <div className="w-12 h-12 border border-gold/20 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-black transition-all shrink-0">
                           <MapPin size={20} />
                         </div>
                         <div>
-                          <p className="text-[10px] uppercase tracking-widest font-bold text-foreground/40 mb-1">
+                          <p className="text-xs uppercase tracking-widest font-bold text-foreground/40 mb-1">
                             Primary Office
                           </p>
                           <p className="text-xl md:text-2xl font-serif">
-                            Garki, Abuja, Nigeria
+                            3 Portharcourt Crescent, Area 11, Garki, Abuja.
                           </p>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-gold uppercase tracking-widest text-xs font-bold mb-8">
+                    <h3 className="text-gold uppercase tracking-widest font-bold mb-8">
                       Professional Network
                     </h3>
                     <div className="flex gap-4">
                       {[
-                        { icon: Link2, label: "Linkedin", href: "#" },
-                        { icon: Camera, label: "Instagram", href: "#" },
-                        { icon: Globe, label: "HXafrica", href: "#" },
+                        {
+                          icon: FaFacebook,
+                          label: "Facebook",
+                          href: "https://web.facebook.com/ugopeters",
+                        },
+                        {
+                          icon: FaLinkedin,
+                          label: "Linkedin",
+                          href: "https://www.linkedin.com/in/ugo-peters/",
+                        },
+                        {
+                          icon: FaInstagram,
+                          label: "Instagram",
+                          href: "https://www.instagram.com/1b40_ng?igsh=MTgxN3lveWF4NDZpdg%3D%3D",
+                        },
                       ].map((social) => (
                         <a
                           href={social.href}
                           key={social.label}
                           aria-label={social.label}
+                          target="_blank"
                           className="w-14 h-14 border border-border flex items-center justify-center hover:border-gold hover:text-gold transition-all"
                         >
                           <social.icon size={24} />
@@ -288,7 +302,9 @@ const Contact = () => {
               size={48}
               className="text-gold mx-auto mb-4 animate-bounce"
             />
-            <p className="text-gold font-serif text-2xl">Abuja, Nigeria</p>
+            <p className="text-gold font-serif text-2xl">
+              Garki, Abuja, Nigeria
+            </p>
           </div>
         </div>
         <div className="absolute inset-0 border-y border-border pointer-events-none" />

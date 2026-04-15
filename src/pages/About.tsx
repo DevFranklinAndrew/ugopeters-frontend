@@ -46,7 +46,7 @@ const About = () => {
                 <img
                   src={image}
                   alt="Ugo Peters Portrait"
-                  className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                  className="w-full h-full object-cover grayscale max-medium-tablet:grayscale-0 hover:grayscale-0 transition-all duration-1000"
                   referrerPolicy="no-referrer"
                 />
               </div>
@@ -74,6 +74,39 @@ const About = () => {
               is more than a resource; it is a collaborative space for coaching
               and mentorship, empowering you to build resilient and thriving
               enterprises.
+            </p>
+            <p>
+              I founded HXafrica, a proptech startup addressing real estate
+              challenges in Sub-Saharan Africa, and oversaw its growth as a
+              Tekedia Capital portfolio company. Passionate about creating
+              innovative solutions, I focus on enabling access to real estate
+              investments for underserved markets. My work is driven by a
+              commitment to delivering impactful strategies that empower
+              organizations and communities alike.
+            </p>
+            <p>
+              HXafrica has other traditional services in construction, finance ,
+              Brokerage, Interior Decor, Insurance and a luxury serviced
+              apartments chain in Abuja fast rising into a mini conglomerate.
+            </p>
+            <p>
+              As a seasoned executive with over a decade of experience in
+              business growth and development, providing strategic planning,
+              efficient management advisory, and corporate relationship
+              building. My role emphasizes fostering growth through structured
+              solutions and collaborative decision-making within the leadership
+              team.
+            </p>
+            <p>
+              I am a Nigerian Federal Government SMEDAN Certified Business
+              Development Service, I have a specialty in SME and Business
+              Launching, Structuring, Brand Development and Executive Coaching.
+            </p>
+            <p>
+              I have successfully launched several businesses which are thriving
+              and have consulted for over 12 businesses I am a mentor at Fate
+              Foundation School of Entrepreneurship, Orange Country Nigeria and
+              a Faculty Member of Tekedia Institute.
             </p>
           </div>
         </div>
