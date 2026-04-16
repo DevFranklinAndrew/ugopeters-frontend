@@ -85,7 +85,7 @@ const About = () => {
               organizations and communities alike.
             </p>
             <p>
-              HXafrica has other traditional services in construction, finance ,
+              HXafrica has other traditional services in construction, finance,
               Brokerage, Interior Decor, Insurance and a luxury serviced
               apartments chain in Abuja fast rising into a mini conglomerate.
             </p>

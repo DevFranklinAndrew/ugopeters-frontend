@@ -1,13 +1,4 @@
-import {
-  Camera,
-  CheckCircle2,
-  Globe,
-  Link2,
-  Mail,
-  MapPin,
-  Phone,
-  Send,
-} from "lucide-react";
+import { CheckCircle2, Mail, MapPin, Send } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
