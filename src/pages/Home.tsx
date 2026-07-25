@@ -84,7 +84,7 @@ const Home = () => {
           <img
             src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000"
             alt="Modern Architecture"
-            className="w-full h-full object-cover grayscale opacity-40 dark:opacity-20"
+            className="w-full h-full object-cover opacity-40 dark:opacity-20"
           />
           <div className="absolute inset-0 bg-linear-to-b from-background/80 via-background to-background" />
         </div>
@@ -142,7 +142,7 @@ const Home = () => {
                 <img
                   src={image}
                   alt="Ugo Peters"
-                  className="w-full h-full object-cover grayscale hover:grayscale-0 max-medium-tablet:grayscale-0 transition-all duration-1000"
+                  className="w-full h-full object-cover transition-all duration-1000"
                   referrerPolicy="no-referrer"
                 />
               </div>
@@ -219,7 +219,7 @@ const Home = () => {
                   <img
                     src={venture.image}
                     alt={venture.title}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -292,7 +292,7 @@ const Home = () => {
               <img
                 src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200"
                 alt="Modern Architecture"
-                className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000"
+                className="w-full h-full object-cover transition-all duration-1000"
                 referrerPolicy="no-referrer"
               />
             </div>

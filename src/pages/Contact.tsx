@@ -294,7 +294,7 @@ const Contact = () => {
       </section>
 
       {/* Location Section */}
-      <section className="h-125 max-mobile:h-72 bg-muted/10 relative overflow-hidden grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-1000">
+      <section className="h-125 max-mobile:h-72 bg-muted/10 relative overflow-hidden opacity-50 hover:opacity-100 transition-all duration-1000">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
             <LuMapPin

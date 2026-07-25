@@ -47,7 +47,7 @@ const About = () => {
                 <img
                   src={image}
                   alt="Ugo Peters Portrait"
-                  className="w-full h-full object-cover grayscale max-medium-tablet:grayscale-0 hover:grayscale-0 transition-all duration-1000"
+                  className="w-full h-full object-cover transition-all duration-1000"
                   referrerPolicy="no-referrer"
                 />
               </div>

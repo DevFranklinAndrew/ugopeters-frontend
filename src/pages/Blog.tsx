@@ -1,3 +1,5 @@
+import { AnimatePresence, motion } from "motion/react";
+import { useMemo, useState } from "react";
 import {
   LuArrowRight,
   LuCalendar,
@@ -5,8 +7,6 @@ import {
   LuChevronRight,
   LuClock,
 } from "react-icons/lu";
-import { AnimatePresence, motion } from "motion/react";
-import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import { posts } from "../data/post";
 import { cn } from "../lib/utils";
@@ -74,7 +74,7 @@ const Blog = () => {
                   <img
                     src={featuredPost.image}
                     alt={featuredPost.title}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000"
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute top-6 left-6">
@@ -132,7 +132,7 @@ const Blog = () => {
                     <img
                       src={post.image}
                       alt={post.title}
-                      className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000"
                       referrerPolicy="no-referrer"
                     />
                   </div>
