@@ -1,4 +1,10 @@
-import { ArrowLeft, Calendar, Clock, Share2, User } from "lucide-react";
+import {
+  LuArrowLeft,
+  LuCalendar,
+  LuClock,
+  LuShare2,
+  LuUser,
+} from "react-icons/lu";
 import { motion } from "motion/react";
 import { Link, useParams } from "react-router";
 import { posts } from "../data/post";
@@ -36,7 +42,7 @@ const BlogDetail = () => {
               to="/blog"
               className="inline-flex items-center gap-3 text-foreground/40 hover:text-gold transition-colors mb-12 group"
             >
-              <ArrowLeft
+              <LuArrowLeft
                 size={18}
                 className="group-hover:-translate-x-2 transition-transform"
               />
@@ -54,19 +60,19 @@ const BlogDetail = () => {
             </h1>
             <div className="flex flex-wrap items-center gap-12 max-mobile:gap-6 text-foreground/40 text-xs uppercase tracking-widest font-bold border-y border-border py-8 max-small-tablet:py-4">
               <div className="flex items-center gap-3">
-                <User size={16} className="text-gold" />
+                <LuUser size={16} className="text-gold" />
                 <span>{post.author}</span>
               </div>
               <div className="flex items-center gap-3">
-                <Calendar size={16} className="text-gold" />
+                <LuCalendar size={16} className="text-gold" />
                 <span>{post.date}</span>
               </div>
               <div className="flex items-center gap-3">
-                <Clock size={16} className="text-gold" />
+                <LuClock size={16} className="text-gold" />
                 <span>{post.readTime}</span>
               </div>
               <button className="flex items-center gap-3 hover:text-gold transition-colors ml-auto group">
-                <Share2 size={16} />
+                <LuShare2 size={16} />
                 <span>Share Insight</span>
               </button>
             </div>

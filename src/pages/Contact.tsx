@@ -1,7 +1,15 @@
-import { CheckCircle2, Mail, MapPin, Send } from "lucide-react";
+import {
+  LuCheck,
+  LuMail,
+  LuMapPin,
+  LuSend,
+  LuFacebook,
+  LuInstagram,
+  LuLinkedin,
+} from "react-icons/lu";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
+
 const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
   return (
@@ -49,7 +57,7 @@ const Contact = () => {
                     <div className="space-y-8">
                       <div className="flex items-start gap-6 max-mobile:gap-4  group">
                         <div className="w-12 h-12 border border-gold/20 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-black transition-all shrink-0">
-                          <Mail size={20} />
+                          <LuMail size={20} />
                         </div>
                         <div>
                           <p className="text-xs uppercase tracking-widest font-bold text-foreground/40 mb-1">
@@ -78,7 +86,7 @@ const Contact = () => {
                       </div> */}
                       <div className="flex items-start gap-6 group">
                         <div className="w-12 h-12 border border-gold/20 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-black transition-all shrink-0">
-                          <MapPin size={20} />
+                          <LuMapPin size={20} />
                         </div>
                         <div>
                           <p className="text-xs uppercase tracking-widest font-bold text-foreground/40 mb-1">
@@ -98,17 +106,17 @@ const Contact = () => {
                     <div className="flex gap-4">
                       {[
                         {
-                          icon: FaFacebook,
+                          icon: LuFacebook,
                           label: "Facebook",
                           href: "https://web.facebook.com/ugopeters",
                         },
                         {
-                          icon: FaLinkedin,
+                          icon: LuLinkedin,
                           label: "Linkedin",
                           href: "https://www.linkedin.com/in/ugo-peters/",
                         },
                         {
-                          icon: FaInstagram,
+                          icon: LuInstagram,
                           label: "Instagram",
                           href: "https://www.instagram.com/1b40_ng?igsh=MTgxN3lveWF4NDZpdg%3D%3D",
                         },
@@ -155,7 +163,7 @@ const Contact = () => {
                       className="text-center py-20"
                     >
                       <div className="w-20 h-20 bg-gold text-black flex items-center justify-center mb-8 rounded-full mx-auto">
-                        <CheckCircle2 size={32} />
+                        <LuCheck size={32} />
                       </div>
                       <h3 className="text-4xl font-serif font-bold mb-6">
                         Inquiry Received
@@ -271,7 +279,7 @@ const Contact = () => {
                         className="w-auto max-mobile:w-full px-12 py-6 bg-gold text-black font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all shadow-xl shadow-gold/10 flex items-center justify-center gap-4 group"
                       >
                         Send Message
-                        <Send
+                        <LuSend
                           size={18}
                           className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
                         />
@@ -289,7 +297,7 @@ const Contact = () => {
       <section className="h-125 max-mobile:h-72 bg-muted/10 relative overflow-hidden grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-1000">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
-            <MapPin
+            <LuMapPin
               size={48}
               className="text-gold mx-auto mb-4 animate-bounce"
             />

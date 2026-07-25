@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Briefcase } from "lucide-react";
+import { LuArrowRight, LuBookOpen, LuBriefcase } from "react-icons/lu";
 import { motion } from "motion/react";
 import { Link } from "react-router";
 import pay100WebShot from "../assets/100pay.png";
@@ -164,12 +164,12 @@ const Portfolio = () => {
               {
                 title: "Mentorship in Business Leadership & Entrepreneurship",
                 desc: "Ugo Peters provides direct mentorship to entrepreneurs building and scaling ventures. His experience leading HXafrica offers practical insight into identifying market gaps, structuring solutions, and executing growth strategies within real operating environments.",
-                icon: BookOpen,
+                icon: LuBookOpen,
               },
               {
                 title: "Coaching on Strategic Business Development",
                 desc: "Drawing from leadership roles across multiple organizations, Ugo Peters provides coaching on strategic growth, partnership development, and operational structuring. His focus is on helping businesses build clarity in direction.",
-                icon: Briefcase,
+                icon: LuBriefcase,
               },
             ].map((service, index) => (
               <motion.div
@@ -193,7 +193,7 @@ const Portfolio = () => {
                   to="/contact"
                   className="inline-flex items-center gap-3 text-gold uppercase tracking-widest text-xs font-bold hover:gap-6 transition-all"
                 >
-                  Learn more <ArrowRight size={20} />
+                  Learn more <LuArrowRight size={20} />
                 </Link>
               </motion.div>
             ))}
@@ -223,7 +223,7 @@ const Portfolio = () => {
               to="/contact"
               className="inline-flex items-center gap-4 px-12 py-6 bg-gold text-black font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all shadow-xl shadow-gold/10"
             >
-              Get in Touch <ArrowRight size={20} />
+              Get in Touch <LuArrowRight size={20} />
             </Link>
           </motion.div>
         </div>
@@ -231,4 +231,5 @@ const Portfolio = () => {
     </div>
   );
 };
+
 export default Portfolio;

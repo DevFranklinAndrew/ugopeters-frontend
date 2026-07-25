@@ -1,4 +1,4 @@
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { LuMenu, LuMoon, LuSun, LuX } from "react-icons/lu";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router";
@@ -66,7 +66,7 @@ const Navbar = () => {
             className="p-2 rounded-full hover:bg-muted/10 transition-colors text-foreground"
             aria-label="Toggle theme"
           >
-            {theme === "light" ? <Moon size={18} /> : <Sun size={18} />}
+            {theme === "light" ? <LuMoon size={18} /> : <LuSun size={18} />}
           </button>
 
           <Link
@@ -83,13 +83,13 @@ const Navbar = () => {
             className="p-2 rounded-full hover:bg-muted/10 transition-colors text-foreground"
             aria-label="Toggle theme"
           >
-            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
+            {theme === "light" ? <LuMoon size={20} /> : <LuSun size={20} />}
           </button>
           <button
             className="text-foreground"
             onClick={() => setIsOpen((open) => !open)}
           >
-            {isOpen ? <X size={24} /> : <Menu size={24} />}
+            {isOpen ? <LuX size={24} /> : <LuMenu size={24} />}
           </button>
         </div>
       </div>

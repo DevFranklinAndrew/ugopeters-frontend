@@ -1,13 +1,13 @@
 import {
-  ArrowRight,
-  Building2,
-  Globe,
-  HomeIcon,
-  Layout,
-  Palette,
-  TrendingUp,
-  Users,
-} from "lucide-react";
+  LuArrowRight,
+  LuBuilding2,
+  LuGlobe,
+  LuHouse,
+  LuPalette,
+  LuTrendingUp,
+  LuUsers,
+  LuPersonStanding,
+} from "react-icons/lu";
 import { motion } from "motion/react";
 import { Link } from "react-router";
 import abujaWebShot from "../assets/Abuja-Apartments.png";
@@ -26,17 +26,17 @@ const whatIDo = [
   {
     title: "Real Estate Growth & Innovation",
     desc: "Structuring and executing high-impact real estate ventures with a focus on scalability, capital efficiency, and long-term asset performance.",
-    icon: Building2,
+    icon: LuBuilding2,
   },
   {
     title: "SME & Business Development",
     desc: "Designing and implementing scalable business architectures for growth-stage enterprises, from early traction to long-term sustainable scale.",
-    icon: TrendingUp,
+    icon: LuTrendingUp,
   },
   {
     title: "Mentorship & Executive Coaching",
     desc: "Advising and developing high-capacity leaders through structured mentorship focused on strategic thinking and decision-making discipline.",
-    icon: Users,
+    icon: LuUsers,
   },
 ];
 
@@ -46,7 +46,7 @@ const ventures = [
     category: "Blockchain Real Estate",
     desc: "A blockchain-enabled platform expanding access to property investment, enhancing liquidity and enabling structured participation.",
     image: hxafricaWebShot,
-    icon: Globe,
+    icon: LuGlobe,
     link: "https://hxafrica.com/",
   },
   {
@@ -54,7 +54,7 @@ const ventures = [
     category: "Residential Solutions",
     desc: "A trusted real estate company delivering end-to-end residential solutions, including acquisition, co-ownership, and management.",
     image: abujaWebShot,
-    icon: HomeIcon,
+    icon: LuHouse,
     link: "https://abuja.apartments/",
   },
   {
@@ -62,7 +62,7 @@ const ventures = [
     category: "Modern Brokerage",
     desc: "A modern brokerage platform reimagining property transactions to make buying and selling more accessible and efficient.",
     image: realtorsfirstShot,
-    icon: Layout,
+    icon: LuPersonStanding,
     link: "https://brokerage.hxafrica.co/",
   },
   {
@@ -70,7 +70,7 @@ const ventures = [
     category: "Design & Furniture",
     desc: "A design brand focused on creating functional and refined living spaces that combine aesthetics with practicality.",
     image: pageboyWebShot,
-    icon: Palette,
+    icon: LuPalette,
     link: "https://pageboyinteriors.com/",
   },
 ];
@@ -121,7 +121,7 @@ const Home = () => {
                   to="/portfolio"
                   className="px-10 py-5 bg-gold text-black font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all flex items-center justify-center gap-3 group"
                 >
-                  View Portfolio <ArrowRight size={18} />
+                  View Portfolio <LuArrowRight size={18} />
                 </Link>
                 <Link
                   to="/about"
@@ -249,7 +249,7 @@ const Home = () => {
                     target="_blank"
                     className="w-12 h-12 border border-border flex items-center justify-center text-foreground group-hover:text-gold transition-colors"
                   >
-                    <ArrowRight size={24} />
+                    <LuArrowRight size={24} />
                   </Link>
                 </div>
               </motion.div>
@@ -320,7 +320,7 @@ const Home = () => {
               Start a conversation
             </span>
             <span className="hidden max-small-mobile:flex">Consultation</span>
-            <ArrowRight size={20} />
+            <LuArrowRight size={20} />
           </Link>
         </div>
       </section>

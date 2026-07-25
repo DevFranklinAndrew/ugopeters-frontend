@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Claude / AI assistant files (keep local, never push)
+CLAUDE.md
+.claude/

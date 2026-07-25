@@ -1,5 +1,10 @@
-import { Mail, MapPin } from "lucide-react";
-import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
+import {
+  LuFacebook,
+  LuInstagram,
+  LuLinkedin,
+  LuMail,
+  LuMapPin,
+} from "react-icons/lu";
 import { Link } from "react-router";
 import Udark from "../assets/Dark Logo.png";
 import ULight from "../assets/Light Logo.png";
@@ -29,21 +34,21 @@ const Footer = () => {
               target="_blank"
               className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:border-gold hover:text-gold transition-all"
             >
-              <FaFacebook size={18} />
+              <LuFacebook size={18} />
             </Link>
             <Link
               to="https://www.linkedin.com/in/ugo-peters/"
               target="_blank"
               className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:border-gold hover:text-gold transition-all"
             >
-              <FaLinkedin size={18} />
+              <LuLinkedin size={18} />
             </Link>
             <Link
               to="https://www.instagram.com/1b40_ng?igsh=MTgxN3lveWF4NDZpdg%3D%3D"
               target="_blank"
               className="w-10 h-10 rounded-full border border-border flex items-center justify-center hover:border-gold hover:text-gold transition-all"
             >
-              <FaInstagram size={18} />
+              <LuInstagram size={18} />
             </Link>
           </div>
         </div>
@@ -102,13 +107,13 @@ const Footer = () => {
           </h4>
           <ul className="flex flex-col gap-4">
             <li className="flex items-start gap-3 text-foreground/70 text-sm">
-              <MapPin size={20} className="text-gold shrink-0" />
+              <LuMapPin size={20} className="text-gold shrink-0" />
               <span>
                 3 Portharcourt Crescent, Area 11, Garki, Abuja, Nigeria.
               </span>
             </li>
             <li className="flex items-center gap-3 text-foreground/70 text-sm">
-              <Mail size={20} className="text-gold shrink-0" />
+              <LuMail size={20} className="text-gold shrink-0" />
               <span>info@ugopeters.com</span>
             </li>
           </ul>

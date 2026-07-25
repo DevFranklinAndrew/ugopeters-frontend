@@ -1,10 +1,10 @@
 import {
-  ArrowRight,
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-} from "lucide-react";
+  LuArrowRight,
+  LuCalendar,
+  LuChevronLeft,
+  LuChevronRight,
+  LuClock,
+} from "react-icons/lu";
 import { AnimatePresence, motion } from "motion/react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
@@ -88,11 +88,11 @@ const Blog = () => {
                     <span className="text-gold">{featuredPost.category}</span>
                     <span className="w-1 h-1 bg-border rounded-full max-medium-mobile:hidden" />
                     <span className="flex items-center gap-2">
-                      <Calendar size={14} /> {featuredPost.date}
+                      <LuCalendar size={14} /> {featuredPost.date}
                     </span>
                     <span className="w-1 h-1 bg-border rounded-full max-medium-mobile:hidden" />
                     <span className="flex items-center gap-2">
-                      <Clock size={14} /> {featuredPost.readTime}
+                      <LuClock size={14} /> {featuredPost.readTime}
                     </span>
                   </div>
                   <Link to={`/blog/${featuredPost.slug}`}>
@@ -108,7 +108,7 @@ const Blog = () => {
                     className="inline-flex items-center gap-4 px-8 py-4 border border-gold/30 text-gold font-bold uppercase tracking-widest text-xs hover:bg-gold hover:text-black transition-all"
                   >
                     Read Full Article
-                    <ArrowRight size={20} />
+                    <LuArrowRight size={20} />
                   </Link>
                 </div>
               </div>
@@ -151,7 +151,7 @@ const Blog = () => {
                   </p>
                   <div className="flex items-center justify-between pt-6 border-t border-border mt-auto">
                     <span className="text-foreground/30 text-[10px] uppercase tracking-widest flex items-center gap-2 font-bold">
-                      <Clock size={14} /> {post.readTime}
+                      <LuClock size={14} /> {post.readTime}
                     </span>
                     <Link
                       to={`/blog/${post.slug}`}
@@ -172,7 +172,7 @@ const Blog = () => {
                 disabled={currentPage === 1}
                 className="w-12 h-12 flex items-center justify-center border border-border text-foreground/40 hover:border-gold hover:text-gold disabled:opacity-20 disabled:hover:border-border disabled:hover:text-foreground/40 transition-all"
               >
-                <ChevronLeft size={20} />
+                <LuChevronLeft size={20} />
               </button>
               <div className="flex items-center gap-2">
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map(
@@ -197,7 +197,7 @@ const Blog = () => {
                 disabled={currentPage === totalPages}
                 className="w-12 h-12 flex items-center justify-center border border-border text-foreground/40 hover:border-gold hover:text-gold disabled:opacity-20 disabled:hover:border-border disabled:hover:text-foreground/40 transition-all"
               >
-                <ChevronRight size={20} />
+                <LuChevronRight size={20} />
               </button>
             </div>
 

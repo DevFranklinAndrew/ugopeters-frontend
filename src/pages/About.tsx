@@ -1,7 +1,8 @@
-import { ArrowRight, Lightbulb, Target, Users } from "lucide-react";
 import { motion } from "motion/react";
+import { LuArrowRight, LuLightbulb, LuTarget, LuUsers } from "react-icons/lu";
 import { Link } from "react-router";
 import image from "../assets/Ugo_Peters_Pic3.jpg";
+
 const About = () => {
   return (
     <div className="flex flex-col">
@@ -179,7 +180,7 @@ const About = () => {
                 className="inline-flex items-center gap-4 px-12 py-6 bg-gold text-black font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all shadow-xl shadow-gold/10"
               >
                 Book a Call
-                <ArrowRight size={20} />
+                <LuArrowRight size={20} />
               </Link>
             </motion.div>
             <div className="p-16 max-mobile:p-6 border border-background/10 bg-background/5 backdrop-blur-sm">
@@ -209,17 +210,17 @@ const About = () => {
               {
                 title: "Sustainable Impact & Growth",
                 desc: "Ugo Peters focuses on delivering measurable, results-driven growth that is both sustainable and scalable. Every initiative is designed with long-term value creation in mind.",
-                icon: Target,
+                icon: LuTarget,
               },
               {
                 title: "Collaborative Partnerships",
                 desc: "His leadership style is rooted in collaboration and alignment. He works closely with partners and stakeholders to build solutions based on transparency and shared objectives.",
-                icon: Users,
+                icon: LuUsers,
               },
               {
                 title: "Innovation with Purpose",
                 desc: "Ugo combines data-driven insight with disciplined creativity to solve complex problems. Ensuring that ideas are implementable and capable of delivering tangible results.",
-                icon: Lightbulb,
+                icon: LuLightbulb,
               },
             ].map((item, index) => (
               <motion.div
