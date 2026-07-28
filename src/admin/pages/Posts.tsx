@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   LuPlus,
   LuPencil,
@@ -12,41 +12,38 @@ import {
 } from "react-icons/lu";
 import { motion } from "motion/react";
 import { Link } from "react-router";
-import { useAdminData } from "../context/AdminDataContext";
+import { usePostList, useDeletePost } from "../../hooks/usePosts";
+import { useDebouncedValue } from "../../hooks/useDebouncedValue";
+import { CATEGORIES } from "../../data/categories";
 import { cn } from "../../lib/utils";
 import Select from "../../components/Select";
 
 const POSTS_PER_PAGE = 8;
+const categories = ["All", ...CATEGORIES];
 
 const Posts = () => {
-  const { posts, deletePost } = useAdminData();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
   const [page, setPage] = useState(1);
 
-  const categories = useMemo(
-    () => ["All", ...[...new Set(posts.map((p) => p.category))].sort()],
-    [posts],
-  );
+  // Debounce the search term so keystrokes don't fire a request each time.
+  const debouncedQuery = useDebouncedValue(query.trim(), 300);
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    return posts.filter((p) => {
-      const matchesQuery =
-        !q ||
-        p.title.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q);
-      const matchesCategory = category === "All" || p.category === category;
-      return matchesQuery && matchesCategory;
-    });
-  }, [posts, query, category]);
+  // The API handles search / filter / pagination — React Query keys off the
+  // params, so changing any of them refetches (and `keepPreviousData` in the
+  // hook avoids a flash between pages).
+  const { data, isPending, isError } = usePostList({
+    page,
+    limit: POSTS_PER_PAGE,
+    category: category === "All" ? undefined : category,
+    search: debouncedQuery || undefined,
+  });
+  const deletePost = useDeletePost();
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / POSTS_PER_PAGE));
-  const currentPage = Math.min(page, totalPages);
-  const paginated = filtered.slice(
-    (currentPage - 1) * POSTS_PER_PAGE,
-    currentPage * POSTS_PER_PAGE,
-  );
+  const posts = data?.posts ?? [];
+  const total = data?.pagination.total ?? 0;
+  const totalPages = data?.pagination.totalPages ?? 1;
+  const currentPage = data?.pagination.page ?? page;
 
   // Snap back to the first page whenever the search or filter changes.
   const handleQuery = (value: string) => {
@@ -60,12 +57,12 @@ const Posts = () => {
 
   const handleDelete = (id: string, title: string) => {
     if (window.confirm(`Delete “${title}”? This cannot be undone.`)) {
-      deletePost(id);
+      deletePost.mutate(id);
     }
   };
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <header className="flex items-end justify-between mb-12 max-mobile:flex-col max-mobile:items-start max-mobile:gap-6">
         <div>
           <span className="text-gold uppercase tracking-[0.3em] text-xs font-bold mb-3 block">
@@ -75,7 +72,8 @@ const Posts = () => {
             Blog Posts
           </h1>
           <p className="text-foreground/50 mt-2 font-light">
-            {posts.length} article{posts.length !== 1 && "s"} published.
+            {total} article{total !== 1 && "s"}
+            {debouncedQuery || category !== "All" ? " matched." : " published."}
           </p>
         </div>
         <Link
@@ -116,12 +114,22 @@ const Posts = () => {
 
       {/* List */}
       <div className="bg-card border border-border divide-y divide-border">
-        {filtered.length === 0 && (
+        {isPending && (
+          <p className="px-6 py-12 text-center text-foreground/40 font-light">
+            Loading posts…
+          </p>
+        )}
+        {isError && !isPending && (
+          <p className="px-6 py-12 text-center text-red-500/80 font-light">
+            Couldn’t load posts. Please try again.
+          </p>
+        )}
+        {!isPending && !isError && posts.length === 0 && (
           <p className="px-6 py-12 text-center text-foreground/40 font-light">
             No posts found.
           </p>
         )}
-        {paginated.map((post, i) => (
+        {posts.map((post, i) => (
           <motion.div
             key={post.id}
             initial={{ opacity: 0, y: 10 }}
@@ -203,8 +211,7 @@ const Posts = () => {
         <div className="flex items-center justify-between gap-4 mt-8 max-mobile:flex-col">
           <p className="text-foreground/40 text-sm font-light">
             Showing {(currentPage - 1) * POSTS_PER_PAGE + 1}–
-            {Math.min(currentPage * POSTS_PER_PAGE, filtered.length)} of{" "}
-            {filtered.length}
+            {Math.min(currentPage * POSTS_PER_PAGE, total)} of {total}
           </p>
           <div className="flex items-center gap-2">
             <button

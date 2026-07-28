@@ -17,6 +17,8 @@ interface SelectProps {
    *  form submission / FormData. */
   name?: string;
   disabled?: boolean;
+  /** Renders the control with a red border to signal a validation error. */
+  invalid?: boolean;
   id?: string;
   /** Applied to the outer wrapper (width, spacing, etc.). */
   className?: string;
@@ -36,6 +38,7 @@ const Select = ({
   placeholder = "Select…",
   name,
   disabled,
+  invalid,
   id,
   className,
   ariaLabel,
@@ -162,9 +165,14 @@ const Select = ({
           open && activeIndex >= 0 ? `${listId}-opt-${activeIndex}` : undefined
         }
         aria-label={ariaLabel}
+        aria-invalid={invalid || undefined}
         className={cn(
-          "w-full flex items-center justify-between gap-3 bg-transparent border-b border-border py-3 text-lg font-serif text-left transition-colors focus:outline-none",
-          open ? "border-gold" : "hover:border-foreground/30",
+          "w-full flex items-center justify-between gap-3 bg-transparent border-b py-3 text-lg font-serif text-left transition-colors focus:outline-none",
+          invalid
+            ? "border-red-500"
+            : open
+              ? "border-gold"
+              : "border-border hover:border-foreground/30",
           disabled && "opacity-50 cursor-not-allowed",
         )}
       >

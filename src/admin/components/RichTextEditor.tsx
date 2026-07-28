@@ -1,14 +1,18 @@
 import { useEffect, useRef } from "react";
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Link from "@tiptap/extension-link";
+import Bold from "@tiptap/extension-bold";
+import Italic from "@tiptap/extension-italic";
+import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
 import Image from "@tiptap/extension-image";
 import {
   LuBold,
   LuItalic,
+  LuUnderline,
   LuHeading2,
   LuHeading3,
+  LuHeading4,
   LuList,
   LuListOrdered,
   LuQuote,
@@ -22,11 +26,49 @@ import {
 } from "react-icons/lu";
 import { cn } from "../../lib/utils";
 
+// By default Tiptap marks are "inclusive": typing right after a styled run
+// keeps the style, which reads as the style bleeding into adjacent text. Making
+// them non-inclusive confines a mark to exactly the selection it was applied to.
+const NonInclusiveBold = Bold.extend({ inclusive: false });
+const NonInclusiveItalic = Italic.extend({ inclusive: false });
+const NonInclusiveUnderline = Underline.extend({ inclusive: false });
+
 interface RichTextEditorProps {
   value: string;
   onChange: (html: string) => void;
   placeholder?: string;
+  /** Renders the toolbar + editor with a red border on validation error. */
+  invalid?: boolean;
 }
+
+const editorClass = (invalid?: boolean) =>
+  cn(
+    "tiptap min-h-96 max-h-[70vh] overflow-y-auto border p-6 focus:outline-none transition-colors",
+    invalid
+      ? "border-red-500 focus:border-red-500"
+      : "border-border focus:border-gold",
+  );
+
+/**
+ * Sanitizes HTML entering the editor (initial content + pastes from the web).
+ * Web copies carry invisible artifacts — empty footnote `<sup></sup>` tags,
+ * empty inline wrappers, and non-breaking spaces — that occupy real document
+ * positions, so the visual selection drifts from the actual positions and marks
+ * appear to "grab" adjacent text. Stripping them keeps selections predictable.
+ */
+const cleanHtml = (html: string): string =>
+  html
+    // Empty inline wrappers, e.g. leftover footnote markers `<sup></sup>`.
+    .replace(/<(sup|sub|span|strong|em|b|i|u|mark)\b[^>]*>\s*<\/\1>/gi, "")
+    // Superscript/subscript aren't supported here — unwrap, keeping any text.
+    .replace(/<\/?(?:sup|sub)\b[^>]*>/gi, "")
+    // Non-breaking spaces read like normal spaces but break word selection.
+    .replace(/&nbsp;|\u00A0/g, " ");
+
+const buildEditorProps = (invalid?: boolean) => ({
+  attributes: { class: editorClass(invalid) },
+  transformPastedHTML: cleanHtml,
+});
 
 interface ToolbarButtonProps {
   onClick: () => void;
@@ -63,9 +105,11 @@ const ToolbarButton = ({
 const Toolbar = ({
   editor,
   onUploadImage,
+  invalid,
 }: {
   editor: Editor;
   onUploadImage: () => void;
+  invalid?: boolean;
 }) => {
   const setLink = () => {
     const previous = editor.getAttributes("link").href as string | undefined;
@@ -91,7 +135,12 @@ const Toolbar = ({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1 border border-border border-b-0 p-2 bg-muted/5">
+    <div
+      className={cn(
+        "flex flex-wrap items-center gap-1 border border-b-0 p-2 bg-muted/5",
+        invalid ? "border-red-500" : "border-border",
+      )}
+    >
       <ToolbarButton
         onClick={() => editor.chain().focus().toggleBold().run()}
         active={editor.isActive("bold")}
@@ -105,6 +154,13 @@ const Toolbar = ({
         title="Italic"
       >
         <LuItalic size={16} />
+      </ToolbarButton>
+      <ToolbarButton
+        onClick={() => editor.chain().focus().toggleUnderline().run()}
+        active={editor.isActive("underline")}
+        title="Underline"
+      >
+        <LuUnderline size={16} />
       </ToolbarButton>
 
       <span className="w-px h-6 bg-border mx-1" />
@@ -126,6 +182,15 @@ const Toolbar = ({
         title="Heading 3"
       >
         <LuHeading3 size={16} />
+      </ToolbarButton>
+      <ToolbarButton
+        onClick={() =>
+          editor.chain().focus().toggleHeading({ level: 4 }).run()
+        }
+        active={editor.isActive("heading", { level: 4 })}
+        title="Heading 4"
+      >
+        <LuHeading4 size={16} />
       </ToolbarButton>
 
       <span className="w-px h-6 bg-border mx-1" />
@@ -208,16 +273,27 @@ const RichTextEditor = ({
   value,
   onChange,
   placeholder,
+  invalid,
 }: RichTextEditorProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Link.configure({
-        openOnClick: false,
-        HTMLAttributes: { rel: "noopener noreferrer", target: "_blank" },
+      StarterKit.configure({
+        // Replaced below with non-inclusive versions.
+        bold: false,
+        italic: false,
+        underline: false,
+        // Link ships with StarterKit v3 — configure it here instead of adding a
+        // second Link extension (which would duplicate-register).
+        link: {
+          openOnClick: false,
+          HTMLAttributes: { rel: "noopener noreferrer", target: "_blank" },
+        },
       }),
+      NonInclusiveBold,
+      NonInclusiveItalic,
+      NonInclusiveUnderline,
       Image.configure({
         inline: false,
         HTMLAttributes: { class: "rounded" },
@@ -226,23 +302,19 @@ const RichTextEditor = ({
         placeholder: placeholder ?? "Write your article...",
       }),
     ],
-    content: value,
+    // Init-once: the editor is uncontrolled after mount. Switching posts remounts
+    // it via the `key` on PostEditorForm, so there's no value→setContent sync
+    // loop (which would rebuild the doc and drop the selection mid-edit).
+    content: cleanHtml(value),
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
-    editorProps: {
-      attributes: {
-        class:
-          "tiptap min-h-96 max-h-[70vh] overflow-y-auto border border-border p-6 focus:outline-none focus:border-gold transition-colors",
-      },
-    },
+    editorProps: buildEditorProps(invalid),
   });
 
-  // Keep the editor in sync if the value is replaced externally (e.g. loading a
-  // different post into the same editor instance).
+  // editorProps is fixed at init, so re-apply it when `invalid` flips (this
+  // preserves the paste sanitizer, which setOptions would otherwise drop).
   useEffect(() => {
-    if (editor && value !== editor.getHTML()) {
-      editor.commands.setContent(value, { emitUpdate: false });
-    }
-  }, [value, editor]);
+    editor?.setOptions({ editorProps: buildEditorProps(invalid) });
+  }, [editor, invalid]);
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -270,6 +342,7 @@ const RichTextEditor = ({
       <Toolbar
         editor={editor}
         onUploadImage={() => fileInputRef.current?.click()}
+        invalid={invalid}
       />
       <input
         ref={fileInputRef}

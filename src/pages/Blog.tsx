@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "motion/react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   LuArrowRight,
   LuCalendar,
@@ -9,52 +9,43 @@ import {
   LuSearch,
 } from "react-icons/lu";
 import { Link } from "react-router";
-import { posts } from "../data/post";
+import { CATEGORIES } from "../data/categories";
+import { useFeaturedPost, usePostList } from "../hooks/usePosts";
+import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import { cn } from "../lib/utils";
 import Select from "../components/Select";
 
 const POSTS_PER_PAGE = 6;
+const categories = ["All", ...CATEGORIES];
+
 const Blog = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
 
-  const featuredPost = useMemo(() => posts.find((p) => p.featured), []);
+  // Debounce the search term so keystrokes don't fire a request each time.
+  const debouncedQuery = useDebouncedValue(query.trim(), 300);
 
-  const categories = useMemo(
-    () => ["All", ...[...new Set(posts.map((p) => p.category))].sort()],
-    [],
-  );
+  const { data: featuredPost } = useFeaturedPost();
 
   // The featured post is only highlighted in the default view; once the reader
   // searches or filters, it joins the grid as a normal (searchable) result.
   const isFiltering = query.trim() !== "" || category !== "All";
 
-  const filteredPosts = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const filtering = q !== "" || category !== "All";
-    const source = filtering ? posts : posts.filter((p) => !p.featured);
-    return source.filter((p) => {
-      const matchesQuery =
-        !q ||
-        p.title.toLowerCase().includes(q) ||
-        p.excerpt.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q);
-      const matchesCategory = category === "All" || p.category === category;
-      return matchesQuery && matchesCategory;
-    });
-  }, [query, category]);
+  const listQuery = usePostList({
+    page: currentPage,
+    limit: POSTS_PER_PAGE,
+    category: category === "All" ? undefined : category,
+    search: debouncedQuery || undefined,
+  });
 
-  const totalPages = Math.max(
-    1,
-    Math.ceil(filteredPosts.length / POSTS_PER_PAGE),
-  );
-  const page = Math.min(currentPage, totalPages);
+  const posts = listQuery.data?.posts ?? [];
+  const totalPages = listQuery.data?.pagination.totalPages ?? 1;
+  const page = listQuery.data?.pagination.page ?? currentPage;
 
-  const currentPosts = useMemo(() => {
-    const startIndex = (page - 1) * POSTS_PER_PAGE;
-    return filteredPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
-  }, [page, filteredPosts]);
+  // In the default view the featured post owns the hero, so keep it out of the
+  // grid to avoid duplication; while filtering it appears as a normal result.
+  const currentPosts = isFiltering ? posts : posts.filter((p) => !p.featured);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -184,6 +175,26 @@ const Blog = () => {
             </motion.article>
           )}
           <div className="mb-32 max-small-tablet:mb-24" id="currentPosts" />
+
+          {/* Loading / error states */}
+          {listQuery.isPending && (
+            <div className="text-center py-24">
+              <p className="text-xl font-serif text-foreground/50">
+                Loading insights…
+              </p>
+            </div>
+          )}
+          {listQuery.isError && !listQuery.isPending && (
+            <div className="text-center py-24">
+              <p className="text-2xl font-serif text-foreground/60 mb-4">
+                Couldn’t load articles
+              </p>
+              <p className="text-foreground/40 font-light">
+                Please refresh the page or try again shortly.
+              </p>
+            </div>
+          )}
+
           {/* Regular Posts Grid */}
           <div className="grid grid-cols-2 gap-16 max-small-tablet:gap-8 max-mobile:grid-cols-1">
             <AnimatePresence>
@@ -236,16 +247,18 @@ const Blog = () => {
           </div>
 
           {/* Empty state */}
-          {filteredPosts.length === 0 && (
-            <div className="text-center py-24">
-              <p className="text-3xl font-serif text-foreground/60 mb-4">
-                No articles found
-              </p>
-              <p className="text-foreground/40 font-light">
-                Try a different search term or category.
-              </p>
-            </div>
-          )}
+          {!listQuery.isPending &&
+            !listQuery.isError &&
+            currentPosts.length === 0 && (
+              <div className="text-center py-24">
+                <p className="text-3xl font-serif text-foreground/60 mb-4">
+                  No articles found
+                </p>
+                <p className="text-foreground/40 font-light">
+                  Try a different search term or category.
+                </p>
+              </div>
+            )}
 
           {/* Pagination Controls */}
           {totalPages > 1 && (

@@ -10,11 +10,11 @@ import {
 import { motion, useScroll, useSpring } from "motion/react";
 import { useState } from "react";
 import { Link, useParams } from "react-router";
-import { posts } from "../data/post";
+import { usePost, usePostList } from "../hooks/usePosts";
 
 const BlogDetail = () => {
   const { slug } = useParams<{ slug: string }>();
-  const post = posts.find((p) => p.slug === slug);
+  const { data: post, isPending, isError } = usePost(slug);
 
   const [copied, setCopied] = useState(false);
   const { scrollYProgress } = useScroll();
@@ -24,7 +24,21 @@ const BlogDetail = () => {
     restDelta: 0.001,
   });
 
-  if (!post)
+  // Related pools — same-category first, topped up with recent posts. Both are
+  // fetched here; they only become meaningful once `post` (its category) loads.
+  const categoryQuery = usePostList({ category: post?.category, limit: 7 });
+  const recentQuery = usePostList({ limit: 7 });
+
+  if (isPending)
+    return (
+      <div className="pt-48 pb-32 px-4 text-center">
+        <p className="text-2xl font-serif text-foreground/50">
+          Loading article…
+        </p>
+      </div>
+    );
+
+  if (isError || !post)
     return (
       <div className="pt-48 pb-32 px-4 text-center">
         <h1 className="text-6xl font-serif font-bold mb-8">
@@ -59,12 +73,15 @@ const BlogDetail = () => {
   };
 
   // Prefer posts in the same category; top up with other recent posts.
-  const sameCategory = posts.filter(
+  const sameCategory = (categoryQuery.data?.posts ?? []).filter(
     (p) => p.slug !== post.slug && p.category === post.category,
   );
   const relatedPosts = [
     ...sameCategory,
-    ...posts.filter((p) => p.slug !== post.slug && !sameCategory.includes(p)),
+    ...(recentQuery.data?.posts ?? []).filter(
+      (p) =>
+        p.slug !== post.slug && !sameCategory.some((s) => s.slug === p.slug),
+    ),
   ].slice(0, 6);
 
   return (

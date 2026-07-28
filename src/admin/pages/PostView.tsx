@@ -8,16 +8,24 @@ import {
   LuUser,
 } from "react-icons/lu";
 import { Link, useParams } from "react-router";
-import { useAdminData } from "../context/AdminDataContext";
+import { useAdminPosts } from "../../hooks/usePosts";
 
 const PostView = () => {
   const { id } = useParams<{ id: string }>();
-  const { getPost } = useAdminData();
-  const post = id ? getPost(id) : undefined;
+  const { data: posts, isPending } = useAdminPosts();
+  const post = posts?.find((p) => p.id === id);
+
+  if (isPending) {
+    return (
+      <div className="max-w-3xl mx-auto">
+        <p className="text-foreground/40 font-light">Loading post…</p>
+      </div>
+    );
+  }
 
   if (!post) {
     return (
-      <div className="max-w-3xl">
+      <div className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-serif font-bold mb-6">Post not found</h1>
         <Link
           to="/admin/posts"
@@ -30,7 +38,7 @@ const PostView = () => {
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl mx-auto">
       {/* Top bar: back + actions */}
       <div className="flex items-center justify-between gap-4 mb-12 max-mobile:flex-col max-mobile:items-start">
         <Link

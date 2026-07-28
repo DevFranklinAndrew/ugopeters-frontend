@@ -9,6 +9,7 @@ import {
 import { motion } from "motion/react";
 import { Link } from "react-router";
 import { useAdminData } from "../context/AdminDataContext";
+import { useAdminPosts } from "../../hooks/usePosts";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-US", {
@@ -18,7 +19,8 @@ const formatDate = (iso: string) =>
   });
 
 const Overview = () => {
-  const { posts, messages, subscribers } = useAdminData();
+  const { messages, subscribers } = useAdminData();
+  const posts = useAdminPosts().data ?? [];
 
   const unread = messages.filter((m) => !m.read).length;
   const featuredCount = posts.filter((p) => p.featured).length;
@@ -59,7 +61,7 @@ const Overview = () => {
     .slice(0, 4);
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <header className="flex items-end justify-between mb-12 max-mobile:flex-col max-mobile:items-start max-mobile:gap-6">
         <div>
           <span className="text-gold uppercase tracking-[0.3em] text-xs font-bold mb-3 block">

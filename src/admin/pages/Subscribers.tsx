@@ -91,7 +91,7 @@ const Subscribers = () => {
   };
 
   return (
-    <div className="max-w-5xl">
+    <div className="max-w-5xl mx-auto">
       <header className="flex items-end justify-between mb-12 max-mobile:flex-col max-mobile:items-start max-mobile:gap-6">
         <div>
           <span className="text-gold uppercase tracking-[0.3em] text-xs font-bold mb-3 block">

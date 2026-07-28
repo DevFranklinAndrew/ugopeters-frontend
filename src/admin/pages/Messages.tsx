@@ -87,7 +87,7 @@ const Messages = () => {
   const unread = messages.filter((m) => !m.read).length;
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <header className="mb-10">
         <span className="text-gold uppercase tracking-[0.3em] text-xs font-bold mb-3 block">
           Inbox
