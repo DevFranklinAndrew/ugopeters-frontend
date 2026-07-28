@@ -192,7 +192,7 @@ const Contact = () => {
                     </motion.div>
                   ) : (
                     <form key="form" className="space-y-10">
-                      <div className="grid grid-cols-2 max-small-tablet:gap-6 max-medium-mobile:grid-cols-1 gap-10">
+                      <div className="grid grid-cols-2 gap-10 max-small-tablet:gap-6 max-medium-mobile:grid-cols-1">
                         <div className="space-y-3">
                           <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
                             Full Name
@@ -205,20 +205,6 @@ const Contact = () => {
                             placeholder="Ex: Aliko Dangote"
                           />
                         </div>
-                        <div className="space-y-3">
-                          <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
-                            Email Address
-                          </label>
-                          <input
-                            required
-                            name="email"
-                            type="email"
-                            className="w-full bg-transparent border-b border-border py-4 focus:border-gold focus:outline-none transition-colors text-lg font-serif"
-                            placeholder="Ex: executive@company.com"
-                          />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-10 max-small-tablet:gap-6 max-medium-mobile:grid-cols-1">
                         <div className="space-y-3">
                           <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
                             Reason for Contact
@@ -234,18 +220,30 @@ const Contact = () => {
                             }))}
                           />
                         </div>
-                        <div className="space-y-3">
-                          <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
-                            Subject
-                          </label>
-                          <input
-                            required
-                            name="subject"
-                            type="text"
-                            className="w-full bg-transparent border-b border-border py-4 focus:border-gold focus:outline-none transition-colors text-lg font-serif"
-                            placeholder="Brief summary"
-                          />
-                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
+                          Email Address
+                        </label>
+                        <input
+                          required
+                          name="email"
+                          type="email"
+                          className="w-full bg-transparent border-b border-border py-4 focus:border-gold focus:outline-none transition-colors text-lg font-serif"
+                          placeholder="Ex: executive@company.com"
+                        />
+                      </div>
+                      <div className="space-y-3">
+                        <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
+                          Subject
+                        </label>
+                        <input
+                          required
+                          name="subject"
+                          type="text"
+                          className="w-full bg-transparent border-b border-border py-4 focus:border-gold focus:outline-none transition-colors text-lg font-serif"
+                          placeholder="Brief summary"
+                        />
                       </div>
                       <div className="space-y-3">
                         <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
