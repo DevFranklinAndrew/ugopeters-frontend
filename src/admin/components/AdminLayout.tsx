@@ -14,7 +14,7 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 import { Link, NavLink, Outlet, ScrollRestoration } from "react-router";
 import { useTheme } from "../../context/ThemeContext";
-import { useAdminAuth } from "../context/AdminAuthContext";
+import { useLogout } from "../hooks/useAuth";
 import { useAdminData } from "../context/AdminDataContext";
 import { cn } from "../../lib/utils";
 
@@ -111,7 +111,7 @@ const SidebarContent = ({
 
 const AdminLayout = () => {
   const { theme, toggleTheme } = useTheme();
-  const { logout } = useAdminAuth();
+  const { mutate: logout } = useLogout();
   const { messages } = useAdminData();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -120,7 +120,7 @@ const AdminLayout = () => {
   const sidebarProps = {
     theme,
     toggleTheme,
-    logout,
+    logout: () => logout(),
     unread,
     onNavigate: () => setMobileOpen(false),
   };

@@ -1,5 +1,8 @@
+import { QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider } from "react-router";
+import { Toaster } from "sonner";
 import Layout from "./components/Layout";
+import { queryClient } from "./lib/queryClient";
 import { ThemeContextProvider } from "./context/ThemeContext";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
@@ -7,7 +10,6 @@ import BlogDetail from "./pages/BlogDetail";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
-import { AdminAuthProvider } from "./admin/context/AdminAuthContext";
 import { AdminDataProvider } from "./admin/context/AdminDataContext";
 import ProtectedRoute from "./admin/components/ProtectedRoute";
 import AdminLayout from "./admin/components/AdminLayout";
@@ -55,13 +57,25 @@ const router = createBrowserRouter([
 
 const App = () => {
   return (
-    <ThemeContextProvider>
-      <AdminAuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeContextProvider>
         <AdminDataProvider>
           <RouterProvider router={router} />
         </AdminDataProvider>
-      </AdminAuthProvider>
-    </ThemeContextProvider>
+      </ThemeContextProvider>
+      <Toaster
+        position="top-center"
+        theme="system"
+        style={{ fontFamily: "var(--font-sans)" }}
+        toastOptions={{
+          classNames: {
+            toast: "bg-card border border-border text-foreground font-sans",
+            title: "text-foreground font-sans",
+            description: "text-foreground/70 font-sans",
+          },
+        }}
+      />
+    </QueryClientProvider>
   );
 };
 export default App;

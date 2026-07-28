@@ -1,37 +1,39 @@
-import { useState, type FormEvent } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { LuLock, LuMail, LuArrowRight } from "react-icons/lu";
 import { motion } from "motion/react";
 import { Navigate, useLocation, useNavigate } from "react-router";
-import {
-  PLACEHOLDER_CREDENTIALS,
-  useAdminAuth,
-} from "../context/AdminAuthContext";
+import { cn } from "../../lib/utils";
+import { useLogin, useMe } from "../hooks/useAuth";
+import { loginSchema, type LoginFormValues } from "../schemas/auth.schema";
 
 interface LocationState {
   from?: { pathname: string };
 }
 
 const Login = () => {
-  const { isAuthenticated, login } = useAdminAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const { data: admin } = useMe();
+  const loginMutation = useLogin();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
+  });
 
   const from = (location.state as LocationState)?.from?.pathname || "/admin";
 
-  if (isAuthenticated) return <Navigate to={from} replace />;
+  if (admin) return <Navigate to={from} replace />;
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    const result = login(email, password);
-    if (result.ok) {
-      navigate(from, { replace: true });
-    } else {
-      setError(result.error ?? "Login failed.");
-    }
+  const onSubmit = (values: LoginFormValues) => {
+    loginMutation.mutate(values, {
+      onSuccess: () => navigate(from, { replace: true }),
+    });
   };
 
   return (
@@ -57,65 +59,79 @@ const Login = () => {
             Sign in to manage your content.
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-6"
+            noValidate
+          >
             <div className="space-y-2">
               <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
                 Email
               </label>
-              <div className="flex items-center gap-3 border-b border-border focus-within:border-gold transition-colors">
+              <div
+                className={cn(
+                  "flex items-center gap-3 border-b transition-colors",
+                  errors.email
+                    ? "border-red-500 focus-within:border-red-500"
+                    : "border-border focus-within:border-gold",
+                )}
+              >
                 <LuMail size={18} className="text-foreground/40" />
                 <input
                   type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  {...register("email")}
                   placeholder="admin@ugopeters.com"
                   className="w-full bg-transparent py-3 focus:outline-none text-lg font-serif"
                 />
               </div>
+              {errors.email && (
+                <p className="text-red-500 text-sm font-medium">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
 
             <div className="space-y-2">
               <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
                 Password
               </label>
-              <div className="flex items-center gap-3 border-b border-border focus-within:border-gold transition-colors">
+              <div
+                className={cn(
+                  "flex items-center gap-3 border-b transition-colors",
+                  errors.password
+                    ? "border-red-500 focus-within:border-red-500"
+                    : "border-border focus-within:border-gold",
+                )}
+              >
                 <LuLock size={18} className="text-foreground/40" />
                 <input
                   type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                  {...register("password")}
                   placeholder="••••••••"
                   className="w-full bg-transparent py-3 focus:outline-none text-lg font-serif"
                 />
               </div>
+              {errors.password && (
+                <p className="text-red-500 text-sm font-medium">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
-
-            {error && (
-              <p className="text-red-500 text-sm font-medium">{error}</p>
-            )}
 
             <button
               type="submit"
-              className="w-full px-8 py-4 bg-gold text-black font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all shadow-xl shadow-gold/10 flex items-center justify-center gap-3 group"
+              disabled={loginMutation.isPending}
+              className="w-full px-8 py-4 bg-gold text-black font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all shadow-xl shadow-gold/10 flex items-center justify-center gap-3 group disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Sign In
+              {loginMutation.isPending ? "Signing in…" : "Sign In"}
               <LuArrowRight
                 size={18}
                 className="group-hover:translate-x-1 transition-transform"
               />
             </button>
           </form>
-
-          {/* Placeholder credentials hint — remove once real auth is wired. */}
-          <div className="mt-8 p-4 bg-muted/5 border border-border text-xs text-foreground/50">
-            <p className="font-bold uppercase tracking-widest text-[10px] text-gold mb-2">
-              Demo credentials
-            </p>
-            <p>Email: {PLACEHOLDER_CREDENTIALS.email}</p>
-            <p>Password: {PLACEHOLDER_CREDENTIALS.password}</p>
-          </div>
         </div>
       </motion.div>
     </div>
