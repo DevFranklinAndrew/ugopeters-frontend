@@ -9,9 +9,19 @@ import {
 } from "react-icons/lu";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import Select from "../components/Select";
+
+const REASON_OPTIONS = [
+  "Strategic Partnership",
+  "Real Estate Consulting",
+  "Speaking Engagement",
+  "Executive Mentorship",
+  "Media Inquiry",
+];
 
 const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [reason, setReason] = useState(REASON_OPTIONS[0]);
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -213,41 +223,16 @@ const Contact = () => {
                           <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
                             Reason for Contact
                           </label>
-                          <select
+                          <Select
                             name="reason"
-                            className="w-full bg-transparent border-b border-border py-4 focus:border-gold focus:outline-none transition-colors text-lg font-serif appearance-none"
-                          >
-                            <option
-                              value="Strategic Partnership"
-                              className="bg-background"
-                            >
-                              Strategic Partnership
-                            </option>
-                            <option
-                              value="Real Estate Consulting"
-                              className="bg-background"
-                            >
-                              Real Estate Consulting
-                            </option>
-                            <option
-                              value="Speaking Engagement"
-                              className="bg-background"
-                            >
-                              Speaking Engagement
-                            </option>
-                            <option
-                              value="Executive Mentorship"
-                              className="bg-background"
-                            >
-                              Executive Mentorship
-                            </option>
-                            <option
-                              value="Media Inquiry"
-                              className="bg-background"
-                            >
-                              Media Inquiry
-                            </option>
-                          </select>
+                            value={reason}
+                            onChange={setReason}
+                            ariaLabel="Reason for Contact"
+                            options={REASON_OPTIONS.map((r) => ({
+                              value: r,
+                              label: r,
+                            }))}
+                          />
                         </div>
                         <div className="space-y-3">
                           <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">

@@ -1,17 +1,28 @@
 import {
   LuArrowLeft,
+  LuArrowRight,
   LuCalendar,
+  LuCheck,
   LuClock,
   LuShare2,
   LuUser,
 } from "react-icons/lu";
-import { motion } from "motion/react";
+import { motion, useScroll, useSpring } from "motion/react";
+import { useState } from "react";
 import { Link, useParams } from "react-router";
 import { posts } from "../data/post";
 
 const BlogDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const post = posts.find((p) => p.slug === slug);
+
+  const [copied, setCopied] = useState(false);
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
   if (!post)
     return (
@@ -28,8 +39,41 @@ const BlogDetail = () => {
       </div>
     );
 
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: post.title, url });
+        return;
+      } catch {
+        // share sheet dismissed — fall through to copy
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // clipboard unavailable — ignore
+    }
+  };
+
+  // Prefer posts in the same category; top up with other recent posts.
+  const sameCategory = posts.filter(
+    (p) => p.slug !== post.slug && p.category === post.category,
+  );
+  const relatedPosts = [
+    ...sameCategory,
+    ...posts.filter((p) => p.slug !== post.slug && !sameCategory.includes(p)),
+  ].slice(0, 6);
+
   return (
     <div className="flex flex-col">
+      {/* Reading progress bar */}
+      <motion.div
+        style={{ scaleX: progress }}
+        className="fixed top-0 left-0 right-0 h-1 bg-gold origin-left z-50"
+      />
       {/* Hero Section */}
       <section className="pt-48 max-tablet:pt-32 max-tablet:pb-24 max-mobile:px-4 pb-32 px-12 bg-muted/5">
         <div className="max-w-4xl mx-auto">
@@ -55,9 +99,12 @@ const BlogDetail = () => {
                 {post.category}
               </span>
             </div>
-            <h1 className="text-7xl max-tablet:text-6xl max-mobile:text-5xl max-small-mobile:text-4xl font-serif font-bold mb-12 max-small-tablet:mb-8 tracking-tight leading-[1.1]">
+            <h1 className="text-7xl max-tablet:text-6xl max-mobile:text-5xl max-small-mobile:text-4xl font-serif font-bold mb-10 max-small-tablet:mb-6 tracking-tight leading-[1.1]">
               {post.title}
             </h1>
+            <p className="text-2xl max-mobile:text-xl text-foreground/60 font-serif italic font-light leading-relaxed mb-12 max-small-tablet:mb-8 max-w-3xl">
+              {post.excerpt}
+            </p>
             <div className="flex flex-wrap items-center gap-12 max-mobile:gap-6 text-foreground/40 text-xs uppercase tracking-widest font-bold border-y border-border py-8 max-small-tablet:py-4">
               <div className="flex items-center gap-3">
                 <LuUser size={16} className="text-gold" />
@@ -71,9 +118,21 @@ const BlogDetail = () => {
                 <LuClock size={16} className="text-gold" />
                 <span>{post.readTime}</span>
               </div>
-              <button className="flex items-center gap-3 hover:text-gold transition-colors ml-auto group">
-                <LuShare2 size={16} />
-                <span>Share Insight</span>
+              <button
+                onClick={handleShare}
+                className="flex items-center gap-3 hover:text-gold transition-colors ml-auto group"
+              >
+                {copied ? (
+                  <>
+                    <LuCheck size={16} className="text-gold" />
+                    <span className="text-gold">Link Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <LuShare2 size={16} />
+                    <span>Share Insight</span>
+                  </>
+                )}
               </button>
             </div>
           </motion.header>
@@ -109,7 +168,7 @@ const BlogDetail = () => {
             className=""
           >
             <div
-              className="text-foreground/70 text-xl max-mobile:text-lg leading-relaxed font-light space-y-8 first-letter:text-7xl first-letter:font-serif first-letter:text-gold first-letter:mr-4 first-letter:float-left"
+              className="blog-content text-foreground/70 text-xl max-mobile:text-lg leading-relaxed font-light space-y-8 first-letter:text-7xl first-letter:font-serif first-letter:text-gold first-letter:mr-4 first-letter:float-left"
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
           </motion.div>
@@ -143,6 +202,68 @@ const BlogDetail = () => {
           </footer>
         </div>
       </div>
+
+      {/* Related Articles */}
+      {relatedPosts.length > 0 && (
+        <section className="pb-32 max-tablet:pb-20 px-12 max-mobile:px-4 bg-muted/5 pt-24 max-tablet:pt-16 border-t border-border">
+          <div className="max-w-6xl mx-auto">
+            <div className="flex items-end justify-between gap-6 mb-16 max-mobile:mb-10">
+              <div>
+                <span className="text-gold uppercase text-xs tracking-[.3rem] font-bold mb-4 block">
+                  Keep Reading
+                </span>
+                <h2 className="text-5xl max-mobile:text-4xl font-serif font-bold tracking-tight">
+                  More Insights
+                </h2>
+              </div>
+              <Link
+                to="/blog"
+                className="inline-flex items-center gap-3 text-gold uppercase tracking-widest text-[10px] font-bold border-b border-gold/30 pb-1 hover:border-gold transition-all whitespace-nowrap max-mobile:hidden"
+              >
+                View All <LuArrowRight size={16} />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-3 gap-10 max-small-tablet:grid-cols-1 max-small-tablet:gap-8">
+              {relatedPosts.map((related, idx) => (
+                <motion.article
+                  key={related.id}
+                  title={related.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.08 }}
+                  className="group flex flex-col"
+                >
+                  <Link
+                    to={`/blog/${related.slug}`}
+                    className="relative aspect-video overflow-hidden border border-border mb-6 block"
+                  >
+                    <img
+                      src={related.image}
+                      alt={related.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-all duration-1000"
+                      referrerPolicy="no-referrer"
+                    />
+                  </Link>
+                  <div className="flex items-center gap-4 mb-3 text-foreground/40 text-[10px] uppercase tracking-widest font-bold">
+                    <span className="text-gold">{related.category}</span>
+                    <span className="w-1 h-1 bg-border rounded-full" />
+                    <span className="flex items-center gap-2">
+                      <LuClock size={12} /> {related.readTime}
+                    </span>
+                  </div>
+                  <Link to={`/blog/${related.slug}`}>
+                    <h3 className="text-2xl font-serif font-bold group-hover:text-gold transition-colors tracking-tight leading-tight line-clamp-2">
+                      {related.title}
+                    </h3>
+                  </Link>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 };
