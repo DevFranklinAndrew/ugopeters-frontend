@@ -1,10 +1,13 @@
-import type { ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router";
+import { toast } from "sonner";
 import type { Post } from "../../data/post";
 import type { PostPayload } from "../../api/posts.api";
+import { getApiErrorMessage } from "../../lib/api";
 import { useCreatePost, useUpdatePost } from "../../hooks/usePosts";
+import { resolvePostImages } from "../lib/postImages";
 import {
   postFormDefaults,
   postSchema,
@@ -23,7 +26,10 @@ export const usePostForm = (existing?: Post) => {
   const updatePost = useUpdatePost();
 
   const isEditing = Boolean(existing);
-  const isSaving = createPost.isPending || updatePost.isPending;
+  // Uploading pending images to Cloudinary happens before the mutation runs.
+  const [isUploading, setIsUploading] = useState(false);
+  const isSaving =
+    isUploading || createPost.isPending || updatePost.isPending;
 
   const form = useForm<PostFormValues>({
     resolver: zodResolver(postSchema),
@@ -41,16 +47,16 @@ export const usePostForm = (existing?: Post) => {
       window.alert("Please choose an image file.");
       return;
     }
-    // No upload backend yet — embed the cover as a base64 data URL. Swap this
-    // for an upload call returning a URL once the API exists.
+    // Store the cover as a base64 data URL for an instant preview; it's uploaded
+    // to Cloudinary (and swapped for its URL) at save time by resolvePostImages.
     const reader = new FileReader();
     reader.onload = () =>
       setValue("image", reader.result as string, { shouldValidate: true });
     reader.readAsDataURL(file);
   };
 
-  const submit = handleSubmit((values) => {
-    const payload: PostPayload = {
+  const submit = handleSubmit(async (values) => {
+    const basePayload: PostPayload = {
       title: values.title,
       content: values.content,
       category: values.category,
@@ -59,6 +65,20 @@ export const usePostForm = (existing?: Post) => {
       // Optional — omit when blank so the server derives it from the content.
       excerpt: values.excerpt?.trim() || undefined,
     };
+
+    // Upload any base64 cover/inline images first so the post carries only URLs.
+    let payload: PostPayload;
+    setIsUploading(true);
+    try {
+      payload = await resolvePostImages(basePayload);
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "Image upload failed. Please try again."),
+      );
+      return;
+    } finally {
+      setIsUploading(false);
+    }
 
     const onSuccess = () => navigate("/admin/posts");
     if (isEditing && existing) {

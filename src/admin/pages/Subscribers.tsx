@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { LuSearch, LuTrash2, LuDownload, LuCopy, LuCheck } from "react-icons/lu";
 import { motion } from "motion/react";
 import { useAdminData } from "../context/AdminDataContext";
+import { useConfirm } from "../../context/ConfirmContext";
 import Select from "../../components/Select";
 import Pagination from "../../components/Pagination";
 
@@ -22,6 +23,7 @@ const formatDate = (iso: string) =>
 
 const Subscribers = () => {
   const { subscribers, deleteSubscriber } = useAdminData();
+  const confirm = useConfirm();
   const [query, setQuery] = useState("");
   const [period, setPeriod] = useState("all");
   const [copied, setCopied] = useState(false);
@@ -84,10 +86,14 @@ const Subscribers = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleDelete = (id: string, email: string) => {
-    if (window.confirm(`Remove ${email} from the list?`)) {
-      deleteSubscriber(id);
-    }
+  const handleDelete = async (id: string, email: string) => {
+    const ok = await confirm({
+      title: "Remove subscriber",
+      description: `${email} will be removed from the newsletter list.`,
+      confirmText: "Remove",
+      tone: "danger",
+    });
+    if (ok) deleteSubscriber(id);
   };
 
   return (

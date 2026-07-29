@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import Layout from "./components/Layout";
 import { queryClient } from "./lib/queryClient";
 import { ThemeContextProvider } from "./context/ThemeContext";
+import { ConfirmProvider } from "./context/ConfirmProvider";
 import About from "./pages/About";
 import Blog from "./pages/Blog";
 import BlogDetail from "./pages/BlogDetail";
@@ -59,9 +60,11 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeContextProvider>
-        <AdminDataProvider>
-          <RouterProvider router={router} />
-        </AdminDataProvider>
+        <ConfirmProvider>
+          <AdminDataProvider>
+            <RouterProvider router={router} />
+          </AdminDataProvider>
+        </ConfirmProvider>
       </ThemeContextProvider>
       <Toaster
         position="top-center"

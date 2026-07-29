@@ -9,11 +9,13 @@ import {
   LuExternalLink,
   LuChevronLeft,
   LuChevronRight,
+  LuLoaderCircle,
 } from "react-icons/lu";
 import { motion } from "motion/react";
 import { Link } from "react-router";
 import { usePostList, useDeletePost } from "../../hooks/usePosts";
 import { useDebouncedValue } from "../../hooks/useDebouncedValue";
+import { useConfirm } from "../../context/ConfirmContext";
 import { CATEGORIES } from "../../data/categories";
 import { cn } from "../../lib/utils";
 import Select from "../../components/Select";
@@ -39,6 +41,7 @@ const Posts = () => {
     search: debouncedQuery || undefined,
   });
   const deletePost = useDeletePost();
+  const confirm = useConfirm();
 
   const posts = data?.posts ?? [];
   const total = data?.pagination.total ?? 0;
@@ -55,10 +58,14 @@ const Posts = () => {
     setPage(1);
   };
 
-  const handleDelete = (id: string, title: string) => {
-    if (window.confirm(`Delete “${title}”? This cannot be undone.`)) {
-      deletePost.mutate(id);
-    }
+  const handleDelete = async (id: string, title: string) => {
+    const ok = await confirm({
+      title: "Delete post",
+      description: `“${title}” will be permanently deleted. This cannot be undone.`,
+      confirmText: "Delete",
+      tone: "danger",
+    });
+    if (ok) deletePost.mutate(id);
   };
 
   return (
@@ -196,10 +203,15 @@ const Posts = () => {
               </Link>
               <button
                 onClick={() => handleDelete(post.id, post.title)}
+                disabled={deletePost.isPending}
                 title="Delete"
-                className="w-10 h-10 flex items-center justify-center border border-border text-foreground/50 hover:border-red-500 hover:text-red-500 transition-all"
+                className="w-10 h-10 flex items-center justify-center border border-border text-foreground/50 hover:border-red-500 hover:text-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:text-foreground/50"
               >
-                <LuTrash2 size={16} />
+                {deletePost.isPending && deletePost.variables === post.id ? (
+                  <LuLoaderCircle size={16} className="animate-spin" />
+                ) : (
+                  <LuTrash2 size={16} />
+                )}
               </button>
             </div>
           </motion.div>

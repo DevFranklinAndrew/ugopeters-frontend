@@ -4,6 +4,7 @@ import { LuArrowLeft } from "react-icons/lu";
 import { motion } from "motion/react";
 import { useSearchParams } from "react-router";
 import { useAdminData } from "../context/AdminDataContext";
+import { useConfirm } from "../../context/ConfirmContext";
 import { cn } from "../../lib/utils";
 import Select from "../../components/Select";
 import Pagination from "../../components/Pagination";
@@ -21,6 +22,7 @@ const formatDate = (iso: string) =>
 
 const Messages = () => {
   const { messages, markMessageRead, deleteMessage } = useAdminData();
+  const confirm = useConfirm();
   const [searchParams] = useSearchParams();
   // Deep link support: /admin/messages?msg=<id> opens that message directly
   // (e.g. from the dashboard's "Recent Messages" list).
@@ -77,11 +79,16 @@ const Messages = () => {
     }
   };
 
-  const handleDelete = (id: string) => {
-    if (window.confirm("Delete this message?")) {
-      deleteMessage(id);
-      if (selectedId === id) setSelectedId(null);
-    }
+  const handleDelete = async (id: string) => {
+    const ok = await confirm({
+      title: "Delete message",
+      description: "This message will be permanently deleted.",
+      confirmText: "Delete",
+      tone: "danger",
+    });
+    if (!ok) return;
+    deleteMessage(id);
+    if (selectedId === id) setSelectedId(null);
   };
 
   const unread = messages.filter((m) => !m.read).length;
