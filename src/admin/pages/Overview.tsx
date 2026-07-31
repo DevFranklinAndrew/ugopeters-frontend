@@ -8,9 +8,9 @@ import {
 } from "react-icons/lu";
 import { motion } from "motion/react";
 import { Link } from "react-router";
-import { useAdminData } from "../context/AdminDataContext";
 import { useAdminPosts } from "../../hooks/usePosts";
 import { useAdminMessages } from "../../hooks/useMessages";
+import { useAdminSubscribers } from "../../hooks/useSubscribers";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-US", {
@@ -20,9 +20,9 @@ const formatDate = (iso: string) =>
   });
 
 const Overview = () => {
-  const { subscribers } = useAdminData();
   const posts = useAdminPosts().data ?? [];
   const messages = useAdminMessages().data ?? [];
+  const subscribers = useAdminSubscribers().data ?? [];
 
   const unread = messages.filter((m) => !m.read).length;
   const featuredCount = posts.filter((p) => p.featured).length;

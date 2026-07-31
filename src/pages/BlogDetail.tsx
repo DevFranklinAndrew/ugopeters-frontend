@@ -9,14 +9,36 @@ import {
 } from "react-icons/lu";
 import { motion, useScroll, useSpring } from "motion/react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useParams } from "react-router";
 import { usePost, usePostList } from "../hooks/usePosts";
+import { useSubscribe } from "../hooks/useSubscribers";
+import {
+  newsletterSchema,
+  type NewsletterFormValues,
+} from "../schemas/newsletter.schema";
 
 const BlogDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { data: post, isPending, isError } = usePost(slug);
 
   const [copied, setCopied] = useState(false);
+
+  const subscribe = useSubscribe();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<NewsletterFormValues>({
+    resolver: zodResolver(newsletterSchema),
+    defaultValues: { email: "" },
+  });
+
+  const onSubscribe = handleSubmit(({ email }) =>
+    subscribe.mutate(email, { onSuccess: () => reset() }),
+  );
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -202,16 +224,27 @@ const BlogDetail = () => {
                   analysis focused on the African economic landscape. Subscribe
                   to stay updated on new perspectives.
                 </p>
-                <form className="flex max-mobile:flex-col gap-4 max-w-2xl">
-                  <input
-                    type="email"
-                    placeholder="Your executive email address"
-                    className="grow bg-background border border-border px-6 py-4 focus:border-gold outline-none transition-all text-xl font-serif"
-                    required
-                  />
-                  <button className="bg-gold text-black px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all whitespace-nowrap shadow-xl shadow-gold/10">
-                    Subscribe
-                  </button>
+                <form onSubmit={onSubscribe} noValidate className="max-w-2xl">
+                  <div className="flex max-mobile:flex-col gap-4">
+                    <input
+                      type="email"
+                      placeholder="Your executive email address"
+                      {...register("email")}
+                      className="grow bg-background border border-border px-6 py-4 focus:border-gold outline-none transition-all text-xl font-serif"
+                    />
+                    <button
+                      type="submit"
+                      disabled={subscribe.isPending}
+                      className="bg-gold text-black px-10 py-4 font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all whitespace-nowrap shadow-xl shadow-gold/10 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {subscribe.isPending ? "Subscribing…" : "Subscribe"}
+                    </button>
+                  </div>
+                  {errors.email && (
+                    <p className="text-red-500 text-sm font-medium mt-3">
+                      {errors.email.message}
+                    </p>
+                  )}
                 </form>
               </div>
               <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-[100px] -mr-32 -mt-32 group-hover:bg-gold/10 transition-all duration-700" />

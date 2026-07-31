@@ -1,7 +1,10 @@
 import { useMemo, useState } from "react";
 import { LuSearch, LuTrash2, LuDownload, LuCopy, LuCheck } from "react-icons/lu";
 import { motion } from "motion/react";
-import { useAdminData } from "../context/AdminDataContext";
+import {
+  useAdminSubscribers,
+  useDeleteSubscriber,
+} from "../../hooks/useSubscribers";
 import { useConfirm } from "../../context/ConfirmContext";
 import Select from "../../components/Select";
 import Pagination from "../../components/Pagination";
@@ -22,7 +25,8 @@ const formatDate = (iso: string) =>
   });
 
 const Subscribers = () => {
-  const { subscribers, deleteSubscriber } = useAdminData();
+  const { data: subscribers = [], isPending, isError } = useAdminSubscribers();
+  const del = useDeleteSubscriber();
   const confirm = useConfirm();
   const [query, setQuery] = useState("");
   const [period, setPeriod] = useState("all");
@@ -93,7 +97,7 @@ const Subscribers = () => {
       confirmText: "Remove",
       tone: "danger",
     });
-    if (ok) deleteSubscriber(id);
+    if (ok) del.mutate(id);
   };
 
   return (
@@ -155,7 +159,17 @@ const Subscribers = () => {
 
       {/* List */}
       <div className="bg-card border border-border divide-y divide-border">
-        {filtered.length === 0 && (
+        {isPending && (
+          <p className="px-6 py-12 text-center text-foreground/40 font-light">
+            Loading subscribers…
+          </p>
+        )}
+        {isError && !isPending && (
+          <p className="px-6 py-12 text-center text-red-500/80 font-light">
+            Couldn't load subscribers.
+          </p>
+        )}
+        {!isPending && !isError && filtered.length === 0 && (
           <p className="px-6 py-12 text-center text-foreground/40 font-light">
             No subscribers found.
           </p>

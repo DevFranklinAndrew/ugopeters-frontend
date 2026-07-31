@@ -11,7 +11,6 @@ import BlogDetail from "./pages/BlogDetail";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import Portfolio from "./pages/Portfolio";
-import { AdminDataProvider } from "./admin/context/AdminDataContext";
 import ProtectedRoute from "./admin/components/ProtectedRoute";
 import AdminLayout from "./admin/components/AdminLayout";
 import Login from "./admin/pages/Login";
@@ -61,9 +60,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <ThemeContextProvider>
         <ConfirmProvider>
-          <AdminDataProvider>
-            <RouterProvider router={router} />
-          </AdminDataProvider>
+          <RouterProvider router={router} />
         </ConfirmProvider>
       </ThemeContextProvider>
       <Toaster
