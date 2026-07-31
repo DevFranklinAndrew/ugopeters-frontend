@@ -15,7 +15,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Link, NavLink, Outlet, ScrollRestoration } from "react-router";
 import { useTheme } from "../../context/ThemeContext";
 import { useLogout } from "../hooks/useAuth";
-import { useAdminData } from "../context/AdminDataContext";
+import { useAdminMessages } from "../../hooks/useMessages";
 import { cn } from "../../lib/utils";
 
 const navItems = [
@@ -112,7 +112,7 @@ const SidebarContent = ({
 const AdminLayout = () => {
   const { theme, toggleTheme } = useTheme();
   const { mutate: logout } = useLogout();
-  const { messages } = useAdminData();
+  const messages = useAdminMessages().data ?? [];
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const unread = messages.filter((m) => !m.read).length;

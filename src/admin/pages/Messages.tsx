@@ -3,7 +3,11 @@ import { LuMail, LuTrash2, LuMailOpen, LuInbox } from "react-icons/lu";
 import { LuArrowLeft } from "react-icons/lu";
 import { motion } from "motion/react";
 import { useSearchParams } from "react-router";
-import { useAdminData } from "../context/AdminDataContext";
+import {
+  useAdminMessages,
+  useDeleteMessage,
+  useMarkMessageRead,
+} from "../../hooks/useMessages";
 import { useConfirm } from "../../context/ConfirmContext";
 import { cn } from "../../lib/utils";
 import Select from "../../components/Select";
@@ -21,7 +25,9 @@ const formatDate = (iso: string) =>
   });
 
 const Messages = () => {
-  const { messages, markMessageRead, deleteMessage } = useAdminData();
+  const { data: messages = [], isPending, isError } = useAdminMessages();
+  const markRead = useMarkMessageRead();
+  const del = useDeleteMessage();
   const confirm = useConfirm();
   const [searchParams] = useSearchParams();
   // Deep link support: /admin/messages?msg=<id> opens that message directly
@@ -32,9 +38,13 @@ const Messages = () => {
   const [reason, setReason] = useState("All");
   const [page, setPage] = useState(1);
 
+  // Auto-mark the deep-linked message read — but only once it's actually loaded
+  // and still unread, to avoid a redundant PATCH (or a 404 on a stale id).
   useEffect(() => {
-    if (initialMsg) markMessageRead(initialMsg, true);
-  }, [initialMsg, markMessageRead]);
+    if (!initialMsg) return;
+    const msg = messages.find((m) => m.id === initialMsg);
+    if (msg && !msg.read) markRead.mutate({ id: initialMsg, read: true });
+  }, [initialMsg, messages, markRead]);
 
   const reasons = useMemo(
     () => ["All", ...[...new Set(messages.map((m) => m.reason))].sort()],
@@ -71,7 +81,8 @@ const Messages = () => {
 
   const handleSelect = (id: string) => {
     setSelectedId(id);
-    markMessageRead(id, true);
+    const msg = messages.find((m) => m.id === id);
+    if (msg && !msg.read) markRead.mutate({ id, read: true });
     // On the stacked mobile/tablet layout the list is replaced by the detail —
     // bring it into view from the top.
     if (window.matchMedia("(max-width: 62.5em)").matches) {
@@ -87,7 +98,7 @@ const Messages = () => {
       tone: "danger",
     });
     if (!ok) return;
-    deleteMessage(id);
+    del.mutate(id);
     if (selectedId === id) setSelectedId(null);
   };
 
@@ -141,7 +152,18 @@ const Messages = () => {
         {/* List */}
         <div className={cn(selected && "max-tablet:hidden")}>
           <div className="bg-card border border-border divide-y divide-border max-h-[70vh] overflow-y-auto">
-            {visible.length === 0 && (
+            {isPending && (
+              <div className="px-6 py-16 text-center text-foreground/40">
+                <p className="font-light">Loading messages…</p>
+              </div>
+            )}
+            {isError && !isPending && (
+              <div className="px-6 py-16 text-center text-red-500/80">
+                <LuInbox size={32} className="mx-auto mb-4 opacity-50" />
+                <p className="font-light">Couldn't load messages.</p>
+              </div>
+            )}
+            {!isPending && !isError && visible.length === 0 && (
               <div className="px-6 py-16 text-center text-foreground/40">
                 <LuInbox size={32} className="mx-auto mb-4 opacity-50" />
                 <p className="font-light">No messages here.</p>
@@ -238,7 +260,10 @@ const Messages = () => {
                   <div className="flex items-center gap-2 shrink-0">
                     <button
                       onClick={() =>
-                        markMessageRead(selected.id, !selected.read)
+                        markRead.mutate({
+                          id: selected.id,
+                          read: !selected.read,
+                        })
                       }
                       title={selected.read ? "Mark unread" : "Mark read"}
                       className="w-10 h-10 flex items-center justify-center border border-border text-foreground/50 hover:border-gold hover:text-gold transition-all"

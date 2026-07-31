@@ -9,7 +9,14 @@ import {
 } from "react-icons/lu";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Select from "../components/Select";
+import { useSubmitMessage } from "../hooks/useMessages";
+import {
+  contactSchema,
+  type ContactFormValues,
+} from "../schemas/contact.schema";
 
 const REASON_OPTIONS = [
   "Strategic Partnership",
@@ -21,7 +28,33 @@ const REASON_OPTIONS = [
 
 const Contact = () => {
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
-  const [reason, setReason] = useState(REASON_OPTIONS[0]);
+  const submit = useSubmitMessage();
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      reason: REASON_OPTIONS[0],
+      subject: "",
+      message: "",
+    },
+  });
+
+  const onSubmit = handleSubmit((values) =>
+    submit.mutate(values, {
+      onSuccess: () => {
+        setIsSubmitted(true);
+        reset();
+      },
+    }),
+  );
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
@@ -191,7 +224,12 @@ const Contact = () => {
                       </button>
                     </motion.div>
                   ) : (
-                    <form key="form" className="space-y-10">
+                    <form
+                      key="form"
+                      onSubmit={onSubmit}
+                      noValidate
+                      className="space-y-10"
+                    >
                       <div className="grid grid-cols-2 gap-10 max-small-tablet:gap-6 max-medium-mobile:grid-cols-1">
                         <div className="space-y-3">
                           <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
@@ -199,26 +237,41 @@ const Contact = () => {
                           </label>
                           <input
                             type="text"
-                            name="name"
-                            required
-                            className="w-full bg-transparent border-b border-border py-4 focus:border-gold focus:outline-none transition-colors text-lg font-serif"
+                            {...register("name")}
+                            className="w-full bg-transparent border-b border-border py-3 focus:border-gold focus:outline-none transition-colors text-lg font-serif"
                             placeholder="Ex: Aliko Dangote"
                           />
+                          {errors.name && (
+                            <p className="text-red-500 text-sm font-medium">
+                              {errors.name.message}
+                            </p>
+                          )}
                         </div>
                         <div className="space-y-3">
                           <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
                             Reason for Contact
                           </label>
-                          <Select
+                          <Controller
+                            control={control}
                             name="reason"
-                            value={reason}
-                            onChange={setReason}
-                            ariaLabel="Reason for Contact"
-                            options={REASON_OPTIONS.map((r) => ({
-                              value: r,
-                              label: r,
-                            }))}
+                            render={({ field }) => (
+                              <Select
+                                value={field.value}
+                                onChange={field.onChange}
+                                invalid={Boolean(errors.reason)}
+                                ariaLabel="Reason for Contact"
+                                options={REASON_OPTIONS.map((r) => ({
+                                  value: r,
+                                  label: r,
+                                }))}
+                              />
+                            )}
                           />
+                          {errors.reason && (
+                            <p className="text-red-500 text-sm font-medium">
+                              {errors.reason.message}
+                            </p>
+                          )}
                         </div>
                       </div>
                       <div className="space-y-3">
@@ -226,42 +279,55 @@ const Contact = () => {
                           Email Address
                         </label>
                         <input
-                          required
-                          name="email"
                           type="email"
-                          className="w-full bg-transparent border-b border-border py-4 focus:border-gold focus:outline-none transition-colors text-lg font-serif"
+                          {...register("email")}
+                          className="w-full bg-transparent border-b border-border py-3 focus:border-gold focus:outline-none transition-colors text-lg font-serif"
                           placeholder="Ex: executive@company.com"
                         />
+                        {errors.email && (
+                          <p className="text-red-500 text-sm font-medium">
+                            {errors.email.message}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-3">
                         <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
                           Subject
                         </label>
                         <input
-                          required
-                          name="subject"
                           type="text"
-                          className="w-full bg-transparent border-b border-border py-4 focus:border-gold focus:outline-none transition-colors text-lg font-serif"
+                          {...register("subject")}
+                          className="w-full bg-transparent border-b border-border py-3 focus:border-gold focus:outline-none transition-colors text-lg font-serif"
                           placeholder="Brief summary"
                         />
+                        {errors.subject && (
+                          <p className="text-red-500 text-sm font-medium">
+                            {errors.subject.message}
+                          </p>
+                        )}
                       </div>
                       <div className="space-y-3">
                         <label className="text-[10px] uppercase tracking-widest font-bold text-foreground/40">
                           Message
                         </label>
                         <textarea
-                          required
-                          name="message"
+                          {...register("message")}
                           rows={5}
-                          className="w-full bg-transparent border-b border-border py-4 focus:border-gold focus:outline-none transition-colors text-lg font-serif resize-none"
+                          className="w-full bg-transparent border-b border-border py-3 focus:border-gold focus:outline-none transition-colors text-lg font-serif resize-none"
                           placeholder="Please provide details regarding your proposal..."
                         />
+                        {errors.message && (
+                          <p className="text-red-500 text-sm font-medium">
+                            {errors.message.message}
+                          </p>
+                        )}
                       </div>
                       <button
                         type="submit"
-                        className="w-auto max-mobile:w-full px-12 py-6 bg-gold text-black font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all shadow-xl shadow-gold/10 flex items-center justify-center gap-4 group"
+                        disabled={submit.isPending}
+                        className="w-auto max-mobile:w-full px-12 py-6 bg-gold text-black font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all shadow-xl shadow-gold/10 flex items-center justify-center gap-4 group disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        Send Message
+                        {submit.isPending ? "Sending…" : "Send Message"}
                         <LuSend
                           size={18}
                           className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"

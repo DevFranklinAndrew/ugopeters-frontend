@@ -10,6 +10,7 @@ import { motion } from "motion/react";
 import { Link } from "react-router";
 import { useAdminData } from "../context/AdminDataContext";
 import { useAdminPosts } from "../../hooks/usePosts";
+import { useAdminMessages } from "../../hooks/useMessages";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-US", {
@@ -19,8 +20,9 @@ const formatDate = (iso: string) =>
   });
 
 const Overview = () => {
-  const { messages, subscribers } = useAdminData();
+  const { subscribers } = useAdminData();
   const posts = useAdminPosts().data ?? [];
+  const messages = useAdminMessages().data ?? [];
 
   const unread = messages.filter((m) => !m.read).length;
   const featuredCount = posts.filter((p) => p.featured).length;
