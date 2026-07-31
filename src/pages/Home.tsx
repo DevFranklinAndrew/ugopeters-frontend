@@ -107,7 +107,7 @@ const Home = () => {
                   </span>
                 ))}
               </div>
-              <h1 className="max-tablet:text-7xl max-mobile:text-6xl max-small-mobile:text-5xl text-8xl font-serif font-bold leading-[1.1] mt-3 mb-5 tracking-tight">
+              <h1 className="max-tablet:text-7xl max-mobile:text-6xl max-small-mobile:text-5xl text-[5.5rem] font-serif font-bold leading-[1.1] mt-3 mb-5 tracking-tight">
                 Building <span className="text-gold">High Impact</span> Ventures
                 Across Africa
               </h1>
