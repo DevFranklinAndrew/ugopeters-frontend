@@ -1,6 +1,7 @@
 import { LuMenu, LuMoon, LuSun, LuX } from "react-icons/lu";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Link, useLocation } from "react-router";
 import Udark from "../assets/Dark Logo.png";
 import ULight from "../assets/Light Logo.png";
@@ -114,79 +115,89 @@ const Navbar = () => {
         </div>
       </div>
 
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Dimmed, blurred overlay — click to dismiss */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              aria-hidden="true"
-              className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm hidden max-small-tablet:block"
-            />
+      {/* Rendered into <body> via a portal, NOT inside <nav>. Once scrolled, the
+          nav gains `backdrop-blur-md`, and an element with a backdrop-filter
+          becomes the containing block for its `position: fixed` descendants —
+          which would collapse this overlay and sidebar into the ~62px nav box
+          instead of the viewport. The portal keeps them anchored to the viewport
+          at any scroll position. They sit above the nav's own z-50 so the bar is
+          dimmed along with the page. */}
+      {createPortal(
+        <AnimatePresence>
+          {isOpen && (
+            <>
+              {/* Dimmed, blurred overlay — click to dismiss */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsOpen(false)}
+                aria-hidden="true"
+                className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm hidden max-small-tablet:block"
+              />
 
-            {/* Left slide-in sidebar */}
-            <motion.aside
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
-              role="dialog"
-              aria-modal="true"
-              aria-label="Navigation menu"
-              className="fixed inset-y-0 left-0 z-50 w-72 max-small-mobile:w-full bg-background border-r border-border shadow-2xl shadow-black/20 hidden max-small-tablet:flex flex-col"
-            >
-              {/* Header: logo + close */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-                <img
-                  src={theme === "light" ? Udark : ULight}
-                  alt="Ugo Peters"
-                  className="h-12"
-                />
-                <button
-                  onClick={() => setIsOpen(false)}
-                  aria-label="Close menu"
-                  className="p-2 text-foreground hover:text-gold transition-colors"
-                >
-                  <LuX size={24} />
-                </button>
-              </div>
-
-              {/* Links */}
-              <div className="flex flex-col gap-1 p-4 grow">
-                {navLinks.map((link) => (
-                  <Link
-                    to={link.path}
-                    key={link.path}
+              {/* Left slide-in sidebar */}
+              <motion.aside
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
+                role="dialog"
+                aria-modal="true"
+                aria-label="Navigation menu"
+                className="fixed inset-y-0 left-0 z-[70] w-72 max-small-mobile:w-full bg-background border-r border-border shadow-2xl shadow-black/20 hidden max-small-tablet:flex flex-col"
+              >
+                {/* Header: logo + close */}
+                <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+                  <img
+                    src={theme === "light" ? Udark : ULight}
+                    alt="Ugo Peters"
+                    className="h-12"
+                  />
+                  <button
                     onClick={() => setIsOpen(false)}
-                    className={cn(
-                      "px-4 py-3 text-sm uppercase tracking-widest border-l-2 transition-colors",
-                      location.pathname === link.path
-                        ? "text-gold border-gold bg-gold/5 font-semibold"
-                        : "text-foreground/70 border-transparent hover:text-gold hover:border-gold/40",
-                    )}
+                    aria-label="Close menu"
+                    className="p-2 text-foreground hover:text-gold transition-colors"
                   >
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
+                    <LuX size={24} />
+                  </button>
+                </div>
 
-              {/* Footer CTA */}
-              <div className="p-4 border-t border-border">
-                <Link
-                  to="/contact"
-                  onClick={() => setIsOpen(false)}
-                  className="block w-full py-4 bg-gold text-black text-center font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all"
-                >
-                  Book Consultation
-                </Link>
-              </div>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+                {/* Links */}
+                <div className="flex flex-col gap-1 p-4 grow">
+                  {navLinks.map((link) => (
+                    <Link
+                      to={link.path}
+                      key={link.path}
+                      onClick={() => setIsOpen(false)}
+                      className={cn(
+                        "px-4 py-3 text-sm uppercase tracking-widest border-l-2 transition-colors",
+                        location.pathname === link.path
+                          ? "text-gold border-gold bg-gold/5 font-semibold"
+                          : "text-foreground/70 border-transparent hover:text-gold hover:border-gold/40",
+                      )}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Footer CTA */}
+                <div className="p-4 border-t border-border">
+                  <Link
+                    to="/contact"
+                    onClick={() => setIsOpen(false)}
+                    className="block w-full py-4 bg-gold text-black text-center font-bold uppercase tracking-widest text-sm hover:bg-gold-light transition-all"
+                  >
+                    Book Consultation
+                  </Link>
+                </div>
+              </motion.aside>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )}
     </nav>
   );
 };
