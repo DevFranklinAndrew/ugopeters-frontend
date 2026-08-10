@@ -48,7 +48,7 @@
 
 
   body {
-    @apply bg-background text-foreground font-sans antialiased transition-colors duration-500;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 
   h1,
@@ -82,8 +82,31 @@
     background-color: #d4af37;
   }
 
-  * {
-    @apply transition-colors duration-300;
+  /* A single, uniform cross-fade for theme changes. Every surface shares one
+     duration and easing: `body` used to fade over 500ms while everything else
+     took 300ms, so the switch visibly tore into two stages. Limited to the
+     colour properties — this sits in the `base` layer, so elements declaring
+     their own `transition-*` utility still win and keep their timing. */
+  *,
+  *::before,
+  *::after {
+    transition:
+      background-color 200ms ease,
+      border-color 200ms ease,
+      color 200ms ease,
+      fill 200ms ease,
+      stroke 200ms ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+    }
   }
 
   /* TipTap rich-text editor content (admin post editor) */
