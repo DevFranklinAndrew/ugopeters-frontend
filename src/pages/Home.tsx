@@ -79,7 +79,10 @@ const Home = () => {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative min-h-[140vh] max-small-desktop:min-h-[125vh] max-tablet:min-h-screen flex items-center max-medium-tablet:pt-32 max-medium-tablet:pb-24 overflow-hidden">
+      {/* `py-28` is symmetric so the centered composition is unchanged, but it
+          guarantees the content always clears the fixed navbar (~72px) once the
+          section is only as tall as the viewport and the content overflows. */}
+      <section className="relative min-h-[140vh] max-small-desktop:min-h-[125vh] max-tablet:min-h-screen flex items-center py-28 max-medium-tablet:pt-32 max-medium-tablet:pb-24 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
             src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=2000"
