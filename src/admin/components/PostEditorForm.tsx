@@ -55,7 +55,7 @@ const PostEditorForm = ({ existing }: { existing?: Post }) => {
           />
         </FormField>
 
-        <div className="grid grid-cols-3 gap-10 max-small-tablet:grid-cols-1 max-small-tablet:gap-6">
+        <div className="grid grid-cols-2 gap-10 max-mobile:grid-cols-1 max-mobile:gap-6">
           <FormField label="Category" error={errors.category?.message}>
             <Controller
               control={control}
@@ -70,15 +70,6 @@ const PostEditorForm = ({ existing }: { existing?: Post }) => {
                   options={categoryOptions}
                 />
               )}
-            />
-          </FormField>
-
-          <FormField label="Publish date" error={errors.date?.message}>
-            <TextInput
-              type="text"
-              {...register("date")}
-              error={Boolean(errors.date)}
-              placeholder="January 15, 2020"
             />
           </FormField>
 

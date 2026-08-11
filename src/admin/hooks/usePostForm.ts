@@ -64,9 +64,8 @@ export const usePostForm = (existing?: Post) => {
       featured: values.featured,
       // Optional — omit when blank so the server derives it from the content.
       excerpt: values.excerpt?.trim() || undefined,
-      // Free text, stored and displayed verbatim; the server parses it only to
-      // derive the sortable publishedAt.
-      date: values.date.trim(),
+      // `date` is deliberately not sent: the CMS no longer edits it, so the
+      // server dates new posts itself and an edit leaves the date untouched.
     };
 
     // Upload any base64 cover/inline images first so the post carries only URLs.
