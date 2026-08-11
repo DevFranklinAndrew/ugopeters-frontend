@@ -34,7 +34,7 @@ const Posts = () => {
   // The API handles search / filter / pagination — React Query keys off the
   // params, so changing any of them refetches (and `keepPreviousData` in the
   // hook avoids a flash between pages).
-  const { data, isPending, isError } = usePostList({
+  const { data, isPending, isFetching, isError } = usePostList({
     page,
     limit: POSTS_PER_PAGE,
     category: category === "All" ? undefined : category,
@@ -47,6 +47,15 @@ const Posts = () => {
   const total = data?.pagination.total ?? 0;
   const totalPages = data?.pagination.totalPages ?? 1;
   const currentPage = data?.pagination.page ?? page;
+
+  // Keystrokes are debounced, so the request hasn't been fired yet while the
+  // typed term is ahead of the debounced one. Counting that as busy makes the
+  // spinner appear on the first keystroke instead of 300ms later.
+  const isSearchPending = query.trim() !== debouncedQuery;
+  // A refetch while previous results are still on screen (search, filter, page
+  // change). `isPending` covers only the very first load, which the list below
+  // renders as full-panel text instead.
+  const isRefreshing = (isFetching && !isPending) || isSearchPending;
 
   // Snap back to the first page whenever the search or filter changes.
   const handleQuery = (value: string) => {
@@ -78,9 +87,23 @@ const Posts = () => {
           <h1 className="text-5xl max-mobile:text-4xl font-serif font-bold tracking-tight">
             Blog Posts
           </h1>
-          <p className="text-foreground/50 mt-2 font-light">
+          <p className="text-foreground/50 mt-2 font-light flex items-center gap-2">
             {total} article{total !== 1 && "s"}
             {debouncedQuery || category !== "All" ? " matched." : " published."}
+            {/* The live region stays mounted so screen readers announce into
+                it; only its contents toggle, which also stops the spinner
+                animating while hidden. */}
+            <span
+              aria-live="polite"
+              className="inline-flex items-center gap-2 text-gold text-sm"
+            >
+              {isRefreshing && (
+                <>
+                  <LuLoaderCircle size={14} className="animate-spin" />
+                  Loading…
+                </>
+              )}
+            </span>
           </p>
         </div>
         <Link
@@ -94,7 +117,12 @@ const Posts = () => {
       {/* Search + filter */}
       <div className="flex items-end gap-6 mb-8 max-mobile:flex-col max-mobile:items-stretch max-mobile:gap-4">
         <div className="flex items-center gap-3 border-b border-border focus-within:border-gold transition-colors flex-1 max-w-md">
-          <LuSearch size={18} className="text-foreground/40" />
+          {/* The icon doubles as the search's own progress indicator. */}
+          {isRefreshing ? (
+            <LuLoaderCircle size={18} className="text-gold animate-spin" />
+          ) : (
+            <LuSearch size={18} className="text-foreground/40" />
+          )}
           <input
             value={query}
             onChange={(e) => handleQuery(e.target.value)}
@@ -119,10 +147,18 @@ const Posts = () => {
         </div>
       </div>
 
-      {/* List */}
-      <div className="bg-card border border-border divide-y divide-border">
+      {/* List. While refreshing, the stale rows are dimmed and made inert so a
+          stray click can't act on a row that's about to be replaced. */}
+      <div
+        aria-busy={isRefreshing || isPending}
+        className={cn(
+          "bg-card border border-border divide-y divide-border transition-opacity duration-200",
+          isRefreshing && "opacity-40 pointer-events-none",
+        )}
+      >
         {isPending && (
-          <p className="px-6 py-12 text-center text-foreground/40 font-light">
+          <p className="px-6 py-12 text-center text-foreground/40 font-light flex items-center justify-center gap-3">
+            <LuLoaderCircle size={16} className="animate-spin text-gold" />
             Loading posts…
           </p>
         )}
@@ -226,9 +262,11 @@ const Posts = () => {
             {Math.min(currentPage * POSTS_PER_PAGE, total)} of {total}
           </p>
           <div className="flex items-center gap-2">
+            {/* Disabled mid-fetch so repeated clicks can't stack up requests
+                and land the user on a page they didn't mean to reach. */}
             <button
               onClick={() => setPage(currentPage - 1)}
-              disabled={currentPage === 1}
+              disabled={currentPage === 1 || isRefreshing}
               title="Previous page"
               className="w-10 h-10 flex items-center justify-center border border-border text-foreground/50 hover:border-gold hover:text-gold transition-all disabled:opacity-30 disabled:hover:border-border disabled:hover:text-foreground/50"
             >
@@ -238,19 +276,25 @@ const Posts = () => {
               <button
                 key={n}
                 onClick={() => setPage(n)}
+                disabled={isRefreshing}
                 className={cn(
-                  "w-10 h-10 flex items-center justify-center border font-bold text-sm transition-all",
+                  "w-10 h-10 flex items-center justify-center border font-bold text-sm transition-all disabled:cursor-not-allowed",
                   n === currentPage
                     ? "bg-gold text-black border-gold"
-                    : "border-border text-foreground/50 hover:border-gold hover:text-gold",
+                    : "border-border text-foreground/50 hover:border-gold hover:text-gold disabled:opacity-30 disabled:hover:border-border disabled:hover:text-foreground/50",
                 )}
               >
-                {n}
+                {/* Spinner marks the page actually being loaded. */}
+                {isRefreshing && n === page && n !== currentPage ? (
+                  <LuLoaderCircle size={14} className="animate-spin" />
+                ) : (
+                  n
+                )}
               </button>
             ))}
             <button
               onClick={() => setPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
+              disabled={currentPage === totalPages || isRefreshing}
               title="Next page"
               className="w-10 h-10 flex items-center justify-center border border-border text-foreground/50 hover:border-gold hover:text-gold transition-all disabled:opacity-30 disabled:hover:border-border disabled:hover:text-foreground/50"
             >
