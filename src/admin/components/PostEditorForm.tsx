@@ -75,12 +75,10 @@ const PostEditorForm = ({ existing }: { existing?: Post }) => {
 
           <FormField label="Publish date" error={errors.date?.message}>
             <TextInput
-              type="date"
+              type="text"
               {...register("date")}
               error={Boolean(errors.date)}
-              // Chrome renders the picker icon dark-on-dark; invert it in dark
-              // mode so it stays visible against the card background.
-              className="dark:[&::-webkit-calendar-picker-indicator]:invert"
+              placeholder="January 15, 2020"
             />
           </FormField>
 

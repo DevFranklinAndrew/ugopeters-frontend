@@ -1,26 +1,17 @@
 import { z } from "zod";
 import type { Post } from "../../data/post";
 
-/** Local calendar date as `yyyy-mm-dd`, the format <input type="date"> uses. */
-const toDateInput = (date: Date): string => {
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-};
-
-/** Today, for the new-post default. */
-export const todayDateInput = (): string => toDateInput(new Date());
-
 /**
- * Turns an existing post's date into the input format. Prefers the ISO
- * `publishedAt`; falls back to parsing the display string for any older row
- * saved before publishedAt existed, and to today if that fails too.
+ * Today in the site's display format, e.g. "August 11, 2026" — the new-post
+ * default. Matches `formatDate` in backend/src/utils/post.util.ts so a post
+ * saved without editing the field reads identically to a server-dated one.
  */
-const postDateInput = (post: Post): string => {
-  const parsed = new Date(post.publishedAt ?? post.date);
-  return Number.isNaN(parsed.getTime())
-    ? todayDateInput()
-    : toDateInput(parsed);
-};
+export const todayDisplayDate = (): string =>
+  new Date().toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 
 /**
  * Mirrors the backend create/update validation
@@ -44,21 +35,9 @@ export const postSchema = z.object({
     ),
   excerpt: z.string().trim().optional(),
   featured: z.boolean(),
-  date: z
-    .string()
-    .trim()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Please choose a publish date.")
-    .refine((value) => {
-      // Reject dates the calendar doesn't have (e.g. 2026-02-31), matching the
-      // server's check so the form fails inline instead of round-tripping a 422.
-      const [year, month, day] = value.split("-").map(Number);
-      const parsed = new Date(year, month - 1, day, 12);
-      return (
-        parsed.getFullYear() === year &&
-        parsed.getMonth() === month - 1 &&
-        parsed.getDate() === day
-      );
-    }, "That date does not exist."),
+  // Free text, shown verbatim on the blog — no format is enforced so the
+  // wording is entirely the author's ("January 15, 2020", "Winter 2024", …).
+  date: z.string().trim().min(1, "Publish date is required."),
 });
 
 export type PostFormValues = z.infer<typeof postSchema>;
@@ -75,7 +54,7 @@ export const postFormDefaults = (): PostFormValues => ({
   image: "",
   excerpt: "",
   content: "",
-  date: todayDateInput(),
+  date: todayDisplayDate(),
 });
 
 /** Maps an existing post into the form's value shape (for edit mode). */
@@ -86,5 +65,7 @@ export const toPostFormValues = (post: Post): PostFormValues => ({
   image: post.image,
   excerpt: post.excerpt,
   content: post.content,
-  date: postDateInput(post),
+  // Round-trips the stored string unchanged, so editing another field can't
+  // quietly reformat the date.
+  date: post.date,
 });

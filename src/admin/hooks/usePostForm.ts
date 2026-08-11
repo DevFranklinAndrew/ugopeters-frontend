@@ -64,8 +64,9 @@ export const usePostForm = (existing?: Post) => {
       featured: values.featured,
       // Optional — omit when blank so the server derives it from the content.
       excerpt: values.excerpt?.trim() || undefined,
-      // yyyy-mm-dd; the server renders the display string and sorts on it.
-      date: values.date,
+      // Free text, stored and displayed verbatim; the server parses it only to
+      // derive the sortable publishedAt.
+      date: values.date.trim(),
     };
 
     // Upload any base64 cover/inline images first so the post carries only URLs.
