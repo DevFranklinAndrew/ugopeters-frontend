@@ -81,7 +81,7 @@ const Login = () => {
                   type="email"
                   autoComplete="email"
                   {...register("email")}
-                  placeholder="admin@ugopeters.com"
+                  placeholder="admin@ugopeters.net"
                   className="w-full bg-transparent py-3 focus:outline-none text-lg font-serif"
                 />
               </div>

@@ -4,7 +4,10 @@ export interface Post {
   title: string;
   excerpt: string;
   content: string;
+  /** Display date, e.g. "January 28, 2026". */
   date: string;
+  /** ISO publish date from the API — the sortable form of `date`. */
+  publishedAt?: string;
   category: string;
   readTime: string;
   image: string;

@@ -33,7 +33,7 @@ export const usePostForm = (existing?: Post) => {
 
   const form = useForm<PostFormValues>({
     resolver: zodResolver(postSchema),
-    defaultValues: existing ? toPostFormValues(existing) : postFormDefaults,
+    defaultValues: existing ? toPostFormValues(existing) : postFormDefaults(),
   });
   const { control, setValue, handleSubmit } = form;
 
@@ -64,6 +64,8 @@ export const usePostForm = (existing?: Post) => {
       featured: values.featured,
       // Optional — omit when blank so the server derives it from the content.
       excerpt: values.excerpt?.trim() || undefined,
+      // yyyy-mm-dd; the server renders the display string and sorts on it.
+      date: values.date,
     };
 
     // Upload any base64 cover/inline images first so the post carries only URLs.

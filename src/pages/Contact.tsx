@@ -107,10 +107,10 @@ const Contact = () => {
                             Executive Correspondence
                           </p>
                           <a
-                            href="mailto:info@ugopeters.com"
+                            href="mailto:info@ugopeters.net"
                             className="text-2xl font-serif hover:text-gold transition-colors"
                           >
-                            info@ugopeters.com
+                            info@ugopeters.net
                           </a>
                         </div>
                       </div>

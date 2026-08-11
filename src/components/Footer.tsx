@@ -114,7 +114,7 @@ const Footer = () => {
             </li>
             <li className="flex items-center gap-3 text-foreground/70 text-sm">
               <LuMail size={20} className="text-gold shrink-0" />
-              <span>info@ugopeters.com</span>
+              <span>info@ugopeters.net</span>
             </li>
           </ul>
         </div>

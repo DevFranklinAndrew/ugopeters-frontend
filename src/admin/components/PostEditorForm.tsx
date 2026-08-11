@@ -55,7 +55,7 @@ const PostEditorForm = ({ existing }: { existing?: Post }) => {
           />
         </FormField>
 
-        <div className="grid grid-cols-2 gap-10 max-mobile:grid-cols-1 max-mobile:gap-6">
+        <div className="grid grid-cols-3 gap-10 max-small-tablet:grid-cols-1 max-small-tablet:gap-6">
           <FormField label="Category" error={errors.category?.message}>
             <Controller
               control={control}
@@ -70,6 +70,17 @@ const PostEditorForm = ({ existing }: { existing?: Post }) => {
                   options={categoryOptions}
                 />
               )}
+            />
+          </FormField>
+
+          <FormField label="Publish date" error={errors.date?.message}>
+            <TextInput
+              type="date"
+              {...register("date")}
+              error={Boolean(errors.date)}
+              // Chrome renders the picker icon dark-on-dark; invert it in dark
+              // mode so it stays visible against the card background.
+              className="dark:[&::-webkit-calendar-picker-indicator]:invert"
             />
           </FormField>
 

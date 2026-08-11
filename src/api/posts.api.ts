@@ -25,12 +25,14 @@ export interface PostListResult {
 
 /**
  * The client-supplied fields for create/update. The server owns the derived
- * fields (`slug`, `date`, `readTime`, `author`, and `excerpt` when blank), so
- * they are never sent from the CMS.
+ * fields (`slug`, `readTime`, `author`, and `excerpt` when blank), so they are
+ * never sent from the CMS. `date` IS sent — it lets manual uploads be
+ * back-dated — as `yyyy-mm-dd`; the server renders the display string from it.
  */
 export type PostPayload = Pick<Post, "title" | "content" | "category" | "image"> & {
   excerpt?: string;
   featured?: boolean;
+  date?: string;
 };
 
 /** Centralized React Query keys for the posts resource. */
