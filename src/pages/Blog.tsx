@@ -6,6 +6,7 @@ import {
   LuChevronLeft,
   LuChevronRight,
   LuClock,
+  LuLoaderCircle,
   LuSearch,
 } from "react-icons/lu";
 import { Link } from "react-router";
@@ -23,13 +24,11 @@ const Blog = () => {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
 
-  // Debounce the search term so keystrokes don't fire a request each time.
+  // Debounced so typing doesn't fire a request per keystroke.
   const debouncedQuery = useDebouncedValue(query.trim(), 300);
 
   const { data: featuredPost } = useFeaturedPost();
 
-  // The featured post is only highlighted in the default view; once the reader
-  // searches or filters, it joins the grid as a normal (searchable) result.
   const isFiltering = query.trim() !== "" || category !== "All";
 
   const listQuery = usePostList({
@@ -40,11 +39,21 @@ const Blog = () => {
   });
 
   const posts = listQuery.data?.posts ?? [];
+  const total = listQuery.data?.pagination.total ?? 0;
   const totalPages = listQuery.data?.pagination.totalPages ?? 1;
   const page = listQuery.data?.pagination.page ?? currentPage;
 
-  // In the default view the featured post owns the hero, so keep it out of the
-  // grid to avoid duplication; while filtering it appears as a normal result.
+  // While the typed term is ahead of the debounced one no request has fired
+  // yet; counting that as busy shows the spinner on the first keystroke rather
+  // than 300ms later.
+  const isSearchPending = query.trim() !== debouncedQuery;
+  // A refetch behind results already on screen. `isPending` is the first load
+  // only, which renders as full-panel text instead.
+  const isRefreshing =
+    (listQuery.isFetching && !listQuery.isPending) || isSearchPending;
+
+  // The featured post owns the hero, so it's kept out of the grid — except
+  // while filtering, where it appears as an ordinary result.
   const currentPosts = isFiltering ? posts : posts.filter((p) => !p.featured);
 
   const handlePageChange = (page: number) => {
@@ -56,7 +65,7 @@ const Blog = () => {
     }, 0);
   };
 
-  // Reset to the first page whenever the search or filter changes.
+  // Search and filter changes reset to page 1.
   const handleQuery = (value: string) => {
     setQuery(value);
     setCurrentPage(1);
@@ -67,7 +76,6 @@ const Blog = () => {
   };
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
       <section className="pt-48 pb-32 max-medium-tablet:pt-32 max-medium-tablet:pb-20 px-12 bg-muted/5 max-mobile:px-4">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -90,13 +98,19 @@ const Blog = () => {
         </div>
       </section>
 
-      {/* Blog Content */}
       <section className="py-32 px-12 max-tablet:py-24 max-mobile:px-4">
         <div className="max-w-6xl mx-auto">
-          {/* Search + Filter */}
           <div className="flex items-end gap-8 mb-24 max-small-tablet:mb-16 max-mobile:flex-col max-mobile:items-stretch max-mobile:gap-6">
             <div className="flex items-center gap-4 border-b border-border focus-within:border-gold transition-colors flex-1">
-              <LuSearch size={22} className="text-foreground/40 shrink-0" />
+              {/* The icon doubles as the search's own progress indicator. */}
+              {isRefreshing ? (
+                <LuLoaderCircle
+                  size={22}
+                  className="text-gold shrink-0 animate-spin"
+                />
+              ) : (
+                <LuSearch size={22} className="text-foreground/40 shrink-0" />
+              )}
               <input
                 value={query}
                 onChange={(e) => handleQuery(e.target.value)}
@@ -120,7 +134,28 @@ const Blog = () => {
             </div>
           </div>
 
-          {/* Featured Post - default view only */}
+          {/* Stays mounted — a live region must exist before it can announce.
+              Only its contents toggle. */}
+          <p
+            aria-live="polite"
+            className="-mt-16 max-small-tablet:-mt-10 mb-16 max-small-tablet:mb-10 h-5 flex items-center gap-3 text-[10px] uppercase tracking-[.2rem] font-bold text-foreground/40"
+          >
+            {isRefreshing ? (
+              <>
+                <LuLoaderCircle size={14} className="text-gold animate-spin" />
+                Searching…
+              </>
+            ) : (
+              isFiltering &&
+              !listQuery.isPending &&
+              !listQuery.isError && (
+                <>
+                  {total} article{total !== 1 && "s"} found
+                </>
+              )
+            )}
+          </p>
+
           {featuredPost && !isFiltering && (
             <motion.article
               title={featuredPost.title}
@@ -176,7 +211,6 @@ const Blog = () => {
           )}
           <div className="mb-32 max-small-tablet:mb-24" id="currentPosts" />
 
-          {/* Loading / error states */}
           {listQuery.isPending && (
             <div className="text-center py-24">
               <p className="text-xl font-serif text-foreground/50">
@@ -195,8 +229,15 @@ const Blog = () => {
             </div>
           )}
 
-          {/* Regular Posts Grid */}
-          <div className="grid grid-cols-2 gap-16 max-small-tablet:gap-8 max-mobile:grid-cols-1">
+          {/* Stale results go inert while refreshing, so a stray click can't
+              open a card that's about to be replaced. */}
+          <div
+            aria-busy={isRefreshing || listQuery.isPending}
+            className={cn(
+              "grid grid-cols-2 gap-16 max-small-tablet:gap-8 max-mobile:grid-cols-1 transition-opacity duration-200",
+              isRefreshing && "opacity-40 pointer-events-none",
+            )}
+          >
             <AnimatePresence>
               {currentPosts.map((post, idx) => (
                 <motion.article
@@ -205,7 +246,6 @@ const Blog = () => {
                   initial={{ opacity: 0, y: 30 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  // exit={{ opacity: 0, y: -30 }}
                   transition={{ duration: 0.5, delay: idx * 0.05 }}
                   className="group flex flex-col"
                 >
@@ -246,9 +286,9 @@ const Blog = () => {
             </AnimatePresence>
           </div>
 
-          {/* Empty state */}
           {!listQuery.isPending &&
             !listQuery.isError &&
+            !isRefreshing &&
             currentPosts.length === 0 && (
               <div className="text-center py-24">
                 <p className="text-3xl font-serif text-foreground/60 mb-4">
@@ -260,13 +300,12 @@ const Blog = () => {
               </div>
             )}
 
-          {/* Pagination Controls */}
           {totalPages > 1 && (
             <div className="mt-32 flex flex-col items-center gap-8">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => handlePageChange(page - 1)}
-                  disabled={page === 1}
+                  disabled={page === 1 || isRefreshing}
                   className="w-12 h-12 flex items-center justify-center border border-border text-foreground/40 hover:border-gold hover:text-gold disabled:opacity-20 disabled:hover:border-border disabled:hover:text-foreground/40 transition-all"
                 >
                   <LuChevronLeft size={20} />
@@ -277,8 +316,9 @@ const Blog = () => {
                       <button
                         key={pageNum}
                         onClick={() => handlePageChange(pageNum)}
+                        disabled={isRefreshing}
                         className={cn(
-                          "w-12 h-12 flex items-center justify-center border text-[10px] font-bold uppercase tracking-widest transition-all",
+                          "w-12 h-12 flex items-center justify-center border text-[10px] font-bold uppercase tracking-widest transition-all disabled:cursor-not-allowed",
                           page === pageNum
                             ? "bg-gold border-gold text-black"
                             : "border-border text-foreground/40 hover:border-gold/50 hover:text-gold",
@@ -291,7 +331,7 @@ const Blog = () => {
                 </div>
                 <button
                   onClick={() => handlePageChange(page + 1)}
-                  disabled={page === totalPages}
+                  disabled={page === totalPages || isRefreshing}
                   className="w-12 h-12 flex items-center justify-center border border-border text-foreground/40 hover:border-gold hover:text-gold disabled:opacity-20 disabled:hover:border-border disabled:hover:text-foreground/40 transition-all"
                 >
                   <LuChevronRight size={20} />
