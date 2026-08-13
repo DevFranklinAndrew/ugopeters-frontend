@@ -13,6 +13,7 @@ import { Link } from "react-router";
 import { CATEGORIES } from "../data/categories";
 import { useFeaturedPost, usePostList } from "../hooks/usePosts";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
+import { pageItems } from "../lib/pagination";
 import { cn } from "../lib/utils";
 import Select from "../components/Select";
 
@@ -25,22 +26,6 @@ const pageBtnClass =
 
 const arrowClass =
   "w-12 h-12 max-small-mobile:w-9 max-small-mobile:h-9 shrink-0 flex items-center justify-center border border-border text-foreground/40 hover:border-gold hover:text-gold disabled:opacity-20 disabled:hover:border-border disabled:hover:text-foreground/40 transition-all";
-
-/**
- * Page numbers to render, windowed around the current page. Caps the row at 7
- * slots however many pages exist — rendering them all overflowed the viewport
- * on mobile. `"gap"` marks an elision.
- */
-const pageItems = (page: number, totalPages: number): (number | "gap")[] => {
-  if (totalPages <= 7) {
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-  if (page <= 4) return [1, 2, 3, 4, 5, "gap", totalPages];
-  if (page >= totalPages - 3) {
-    return [1, "gap", ...[4, 3, 2, 1, 0].map((n) => totalPages - n)];
-  }
-  return [1, "gap", page - 1, page, page + 1, "gap", totalPages];
-};
 
 const Blog = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);

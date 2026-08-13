@@ -7,8 +7,6 @@ import {
   LuStar,
   LuEye,
   LuExternalLink,
-  LuChevronLeft,
-  LuChevronRight,
   LuLoaderCircle,
 } from "react-icons/lu";
 import { motion } from "motion/react";
@@ -18,6 +16,7 @@ import { useDebouncedValue } from "../../hooks/useDebouncedValue";
 import { useConfirm } from "../../context/ConfirmContext";
 import { CATEGORIES } from "../../data/categories";
 import { cn } from "../../lib/utils";
+import Pagination from "../../components/Pagination";
 import Select from "../../components/Select";
 
 const POSTS_PER_PAGE = 8;
@@ -256,44 +255,16 @@ const Posts = () => {
             Showing {(currentPage - 1) * POSTS_PER_PAGE + 1}–
             {Math.min(currentPage * POSTS_PER_PAGE, total)} of {total}
           </p>
-          <div className="flex items-center gap-2">
-            {/* Disabled mid-fetch, or stacked clicks overshoot the target page. */}
-            <button
-              onClick={() => setPage(currentPage - 1)}
-              disabled={currentPage === 1 || isRefreshing}
-              title="Previous page"
-              className="w-10 h-10 flex items-center justify-center border border-border text-foreground/50 hover:border-gold hover:text-gold transition-all disabled:opacity-30 disabled:hover:border-border disabled:hover:text-foreground/50"
-            >
-              <LuChevronLeft size={16} />
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-              <button
-                key={n}
-                onClick={() => setPage(n)}
-                disabled={isRefreshing}
-                className={cn(
-                  "w-10 h-10 flex items-center justify-center border font-bold text-sm transition-all disabled:cursor-not-allowed",
-                  n === currentPage
-                    ? "bg-gold text-black border-gold"
-                    : "border-border text-foreground/50 hover:border-gold hover:text-gold disabled:opacity-30 disabled:hover:border-border disabled:hover:text-foreground/50",
-                )}
-              >
-                {isRefreshing && n === page && n !== currentPage ? (
-                  <LuLoaderCircle size={14} className="animate-spin" />
-                ) : (
-                  n
-                )}
-              </button>
-            ))}
-            <button
-              onClick={() => setPage(currentPage + 1)}
-              disabled={currentPage === totalPages || isRefreshing}
-              title="Next page"
-              className="w-10 h-10 flex items-center justify-center border border-border text-foreground/50 hover:border-gold hover:text-gold transition-all disabled:opacity-30 disabled:hover:border-border disabled:hover:text-foreground/50"
-            >
-              <LuChevronRight size={16} />
-            </button>
-          </div>
+          {/* Disabled mid-fetch, or stacked clicks overshoot the target page.
+              `page` is the requested page, `currentPage` the confirmed one, so
+              they differ exactly while the next page is in flight. */}
+          <Pagination
+            page={currentPage}
+            totalPages={totalPages}
+            onChange={setPage}
+            disabled={isRefreshing}
+            loadingPage={isRefreshing ? page : undefined}
+          />
         </div>
       )}
     </div>
