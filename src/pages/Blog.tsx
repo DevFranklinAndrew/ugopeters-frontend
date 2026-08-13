@@ -3,8 +3,6 @@ import { useState } from "react";
 import {
   LuArrowRight,
   LuCalendar,
-  LuChevronLeft,
-  LuChevronRight,
   LuClock,
   LuLoaderCircle,
   LuSearch,
@@ -13,19 +11,12 @@ import { Link } from "react-router";
 import { CATEGORIES } from "../data/categories";
 import { useFeaturedPost, usePostList } from "../hooks/usePosts";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
-import { pageItems } from "../lib/pagination";
 import { cn } from "../lib/utils";
+import Pagination from "../components/Pagination";
 import Select from "../components/Select";
 
 const POSTS_PER_PAGE = 6;
 const categories = ["All", ...CATEGORIES];
-
-// Buttons shrink a step at the narrowest breakpoint so the row still fits.
-const pageBtnClass =
-  "w-12 h-12 max-small-mobile:w-9 max-small-mobile:h-9 shrink-0 flex items-center justify-center border text-[10px] max-small-mobile:text-[9px] font-bold uppercase tracking-widest transition-all disabled:cursor-not-allowed";
-
-const arrowClass =
-  "w-12 h-12 max-small-mobile:w-9 max-small-mobile:h-9 shrink-0 flex items-center justify-center border border-border text-foreground/40 hover:border-gold hover:text-gold disabled:opacity-20 disabled:hover:border-border disabled:hover:text-foreground/40 transition-all";
 
 const Blog = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -309,64 +300,18 @@ const Blog = () => {
             )}
 
           {totalPages > 1 && (
-            <nav
-              aria-label="Blog pagination"
-              className="mt-32 max-small-tablet:mt-20 flex flex-col items-center gap-8"
-            >
-              {/* Bounded to 7 slots by pageItems, so this only ever scrolls on
-                  a viewport narrower than ~360px — never the page itself. */}
-              <div className="flex items-center gap-3 max-small-mobile:gap-1.5 max-w-full overflow-x-auto">
-                <button
-                  onClick={() => handlePageChange(page - 1)}
-                  disabled={page === 1 || isRefreshing}
-                  aria-label="Previous page"
-                  className={arrowClass}
-                >
-                  <LuChevronLeft size={20} />
-                </button>
-                <div className="flex items-center gap-2 max-small-mobile:gap-1">
-                  {pageItems(page, totalPages).map((item, i) =>
-                    item === "gap" ? (
-                      <span
-                        key={`gap-${i}`}
-                        aria-hidden="true"
-                        className="w-6 max-small-mobile:w-4 text-center text-foreground/30 font-bold"
-                      >
-                        ·
-                      </span>
-                    ) : (
-                      <button
-                        key={item}
-                        onClick={() => handlePageChange(item)}
-                        disabled={isRefreshing}
-                        aria-label={`Page ${item}`}
-                        aria-current={page === item ? "page" : undefined}
-                        className={cn(
-                          pageBtnClass,
-                          page === item
-                            ? "bg-gold border-gold text-black"
-                            : "border-border text-foreground/40 hover:border-gold/50 hover:text-gold",
-                        )}
-                      >
-                        {item.toString().padStart(2, "0")}
-                      </button>
-                    ),
-                  )}
-                </div>
-                <button
-                  onClick={() => handlePageChange(page + 1)}
-                  disabled={page === totalPages || isRefreshing}
-                  aria-label="Next page"
-                  className={arrowClass}
-                >
-                  <LuChevronRight size={20} />
-                </button>
-              </div>
-
+            <div className="mt-32 max-small-tablet:mt-20 flex flex-col items-center gap-8">
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onChange={handlePageChange}
+                disabled={isRefreshing}
+                size="lg"
+              />
               <p className="text-foreground/30 text-[10px] uppercase tracking-[.2rem] font-bold">
                 Page {page} of {totalPages}
               </p>
-            </nav>
+            </div>
           )}
         </div>
       </section>
