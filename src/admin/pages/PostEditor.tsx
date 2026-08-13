@@ -11,11 +11,8 @@ const BackToPosts = () => (
   </Link>
 );
 
-/**
- * Resolves the post being edited (if any) from the cached admin list, then
- * hands off to the form. Handles the loading / not-found routing states so the
- * form itself can assume a valid post. The `key` resets form state per post.
- */
+/** Absorbs the loading / not-found states so the form can assume a valid post.
+ *  The `key` resets form state when switching between posts. */
 const PostEditor = () => {
   const { id } = useParams<{ id: string }>();
   const isEditing = Boolean(id);

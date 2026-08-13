@@ -1,10 +1,7 @@
 import { z } from "zod";
 
-/**
- * Mirrors the backend contact validation
- * (backend/src/validations/message.validation.ts) so client-side errors match
- * what the server would reject.
- */
+/** Keep in sync with backend/src/validations/message.validation.ts, so the
+ *  client rejects exactly what the server would. */
 export const contactSchema = z.object({
   name: z.string().trim().min(1, "Name is required.").max(200, "Name is too long."),
   email: z

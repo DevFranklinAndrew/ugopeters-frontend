@@ -1,12 +1,8 @@
 import { Navigate, Outlet, useLocation } from "react-router";
 import { useMe } from "../hooks/useAuth";
 
-/**
- * Guards the /admin route tree. Verifies the session via GET /api/admin/me.
- * While that request is in flight a loader is shown to avoid a redirect flash;
- * an unauthenticated (401) result redirects to login, preserving the attempted
- * location so the user is returned there after signing in.
- */
+/** Guards /admin. The loader avoids a redirect flash while the session request
+ *  is in flight; `from` returns the user to where they were headed. */
 const ProtectedRoute = () => {
   const { data: admin, isLoading } = useMe();
   const location = useLocation();

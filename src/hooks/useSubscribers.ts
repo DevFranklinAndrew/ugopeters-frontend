@@ -8,14 +8,10 @@ import {
   subscribersKeys,
 } from "../api/subscribers.api";
 
-// The admin page fetches everything once, then searches/filters/paginates on
-// the client (see Subscribers.tsx) — matching the useAdminMessages pattern.
+// The admin page fetches everything once, then filters/paginates client-side.
 const ADMIN_LIMIT = 1000;
 
-/**
- * Public newsletter subscription. Toasts the server's message so the idempotent
- * outcome ("You're subscribed." vs "You're already subscribed.") is visible.
- */
+/** Toasts the server's own message, so a repeat subscribe reads correctly. */
 export const useSubscribe = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -28,7 +24,6 @@ export const useSubscribe = () => {
   });
 };
 
-/** All subscribers for the admin page. */
 export const useAdminSubscribers = () =>
   useQuery({
     queryKey: subscribersKeys.admin(),

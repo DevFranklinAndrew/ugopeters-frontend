@@ -13,24 +13,18 @@ interface SelectProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
-  /** When set, a hidden input is rendered so the value is picked up by native
-   *  form submission / FormData. */
+  /** When set, renders a hidden input so native form submission sees the value. */
   name?: string;
   disabled?: boolean;
-  /** Renders the control with a red border to signal a validation error. */
   invalid?: boolean;
   id?: string;
-  /** Applied to the outer wrapper (width, spacing, etc.). */
+  /** Applied to the outer wrapper. */
   className?: string;
   ariaLabel?: string;
 }
 
-/**
- * Accessible custom dropdown used across the app in place of the native
- * `<select>` (which can't be fully styled — dropdown option colors/hover are
- * controlled by the OS). Fully keyboard-navigable and themeable, with the gold
- * accent on the active/hovered option.
- */
+/** Replaces the native `<select>`, whose dropdown options can't be styled —
+ *  the OS controls their colors. Keyboard-navigable and theme-aware. */
 const Select = ({
   options,
   value,
@@ -73,7 +67,7 @@ const Select = ({
     return () => document.removeEventListener("mousedown", onDown);
   }, [open]);
 
-  // Keep the active option scrolled into view during keyboard navigation.
+  // Keep the active option in view during keyboard navigation.
   useEffect(() => {
     if (!open || activeIndex < 0) return;
     const el = listRef.current?.children[activeIndex] as

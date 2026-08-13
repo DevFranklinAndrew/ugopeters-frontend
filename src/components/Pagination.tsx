@@ -9,10 +9,7 @@ interface PaginationProps {
   className?: string;
 }
 
-/**
- * Compact numbered pagination used across the admin tables. Renders nothing
- * when there's a single page.
- */
+/** Renders nothing when there's only one page. */
 const Pagination = ({ page, totalPages, onChange, className }: PaginationProps) => {
   if (totalPages <= 1) return null;
 

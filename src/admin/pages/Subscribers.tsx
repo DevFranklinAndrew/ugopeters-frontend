@@ -32,7 +32,7 @@ const Subscribers = () => {
   const [period, setPeriod] = useState("all");
   const [copied, setCopied] = useState(false);
   const [page, setPage] = useState(1);
-  // Reference "now" captured once (lazy init keeps it out of render purity).
+  // Captured once via lazy init, so the period filter has a stable reference.
   const [now] = useState(() => Date.now());
 
   const filtered = useMemo(() => {
@@ -132,7 +132,6 @@ const Subscribers = () => {
         </div>
       </header>
 
-      {/* Search + filter */}
       <div className="flex items-end gap-6 mb-8 max-mobile:flex-col max-mobile:items-stretch max-mobile:gap-4">
         <div className="flex items-center gap-3 border-b border-border focus-within:border-gold transition-colors flex-1 max-w-md">
           <LuSearch size={18} className="text-foreground/40" />
@@ -157,7 +156,6 @@ const Subscribers = () => {
         </div>
       </div>
 
-      {/* List */}
       <div className="bg-card border border-border divide-y divide-border">
         {isPending && (
           <p className="px-6 py-12 text-center text-foreground/40 font-light">
@@ -205,7 +203,6 @@ const Subscribers = () => {
         ))}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between gap-4 mt-8 max-mobile:flex-col">
           <p className="text-foreground/40 text-sm font-light">

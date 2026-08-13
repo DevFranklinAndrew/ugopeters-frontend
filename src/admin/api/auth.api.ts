@@ -8,12 +8,10 @@ export interface Admin {
   role: string;
 }
 
-/** Envelope returned by the auth endpoints: { status, data: { admin } }. */
 interface AdminEnvelope {
   data: { admin: Admin };
 }
 
-/** React Query key for the current-admin session. */
 export const ME_QUERY_KEY = ["admin", "me"];
 
 export const login = async (payload: LoginFormValues): Promise<Admin> => {

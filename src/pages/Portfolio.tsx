@@ -58,7 +58,6 @@ const projects = [
 const Portfolio = () => {
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
       <section className="pt-48 max-medium-tablet:pt-32 max-medium-tablet:pb-20 pb-32 px-12 max-mobile:px-4 bg-muted/5">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -81,7 +80,6 @@ const Portfolio = () => {
           </motion.div>
         </div>
       </section>
-      {/* Projects Grid */}
       <section className="py-32 px-12 max-tablet:py-24 max-mobile:px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 gap-20 max-small-tablet:grid-cols-1 max-small-tablet:gap-12">
@@ -128,7 +126,6 @@ const Portfolio = () => {
           </div>
         </div>
       </section>
-      {/* Quote Section */}
       <section className="py-32 max-tablet:py-16 bg-foreground text-background">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <motion.div
@@ -148,7 +145,6 @@ const Portfolio = () => {
           </motion.div>
         </div>
       </section>
-      {/* Services Section */}
       <section className="py-32 px-12 max-tablet:py-24 max-mobile:px-4">
         <div className="max-w-6xl mx-auto">
           <div className="mb-24 max-small-tablet:mb-16">
@@ -201,7 +197,6 @@ const Portfolio = () => {
         </div>
       </section>
 
-      {/* Final CTA */}
       <section className="py-32 px-12 max-tablet:py-24 max-mobile:px-4 bg-muted/5 border-l-4 border-gold">
         <div className="max-w-4xl mx-auto">
           <motion.div

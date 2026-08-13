@@ -20,11 +20,7 @@ export interface ConfirmDialogProps {
 const FOCUSABLE =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-/**
- * Accessible, themed replacement for `window.confirm`. Usually driven through
- * the `useConfirm()` hook rather than rendered directly. Renders in a portal,
- * cancels on Escape / backdrop click, traps focus, and restores focus on close.
- */
+/** Usually driven through `useConfirm()` rather than rendered directly. */
 const ConfirmDialog = ({
   open,
   title,

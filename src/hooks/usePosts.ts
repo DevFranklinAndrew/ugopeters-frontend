@@ -17,10 +17,8 @@ import {
   type PostPayload,
 } from "../api/posts.api";
 
-/** Fetch all posts once (admin) — the CMS list, and the source for by-id lookups. */
 const ADMIN_LIMIT = 1000;
 
-/** Paginated/filterable list for the public blog grid. */
 export const usePostList = (params: PostListParams) =>
   useQuery({
     queryKey: postsKeys.list(params),
@@ -28,7 +26,6 @@ export const usePostList = (params: PostListParams) =>
     placeholderData: keepPreviousData,
   });
 
-/** The single featured post for the blog hero. */
 export const useFeaturedPost = () =>
   useQuery({
     queryKey: postsKeys.featured(),
@@ -36,7 +33,6 @@ export const useFeaturedPost = () =>
     select: (result) => result.posts[0],
   });
 
-/** A single post by slug for the public BlogDetail page. */
 export const usePost = (slug: string | undefined) =>
   useQuery({
     queryKey: postsKeys.detail(slug ?? ""),
@@ -45,11 +41,8 @@ export const usePost = (slug: string | undefined) =>
     retry: false,
   });
 
-/**
- * All posts for the admin dashboard. The backend has no get-by-id endpoint, so
- * PostView / PostEditor derive a single post from this cached list by `id`
- * (as the old in-memory `getPost` did).
- */
+/** Fetches every post at once: the backend has no get-by-id endpoint, so
+ *  PostView / PostEditor look a single post up from this cached list. */
 export const useAdminPosts = () =>
   useQuery({
     queryKey: postsKeys.admin(),

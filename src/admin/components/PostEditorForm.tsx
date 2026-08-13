@@ -80,9 +80,8 @@ const PostEditorForm = ({ existing }: { existing?: Post }) => {
                 {...register("featured")}
                 className="w-5 h-5 accent-gold"
               />
-              {/* leading-7 lifts this control's line box to the text-lg
-                  line-height of the other fields, so its height (and bottom
-                  border) lines up with the Category select beside it. */}
+              {/* leading-7 matches the text-lg line-height of the other fields,
+                  so this row's bottom border lines up with the Category select. */}
               <span className="text-sm font-medium leading-7">
                 Feature on the blog page
               </span>

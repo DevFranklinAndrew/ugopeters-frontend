@@ -1,14 +1,13 @@
 import type { PostPayload } from "../../api/posts.api";
 import { uploadImage } from "../../api/upload.api";
 
-/** True for base64/`data:` image URLs (the CMS's local, not-yet-uploaded state). */
+/** A `data:` URL is the CMS's local, not-yet-uploaded state. */
 const isDataUrl = (src: string): boolean => src.startsWith("data:");
 
-/** Converts a `data:` URL to a Blob so it can be sent as multipart. */
 const dataUrlToBlob = (dataUrl: string): Promise<Blob> =>
   fetch(dataUrl).then((res) => res.blob());
 
-/** Uploads a `data:` URL and returns its hosted Cloudinary URL (memoized per call). */
+/** Memoized, so the same image used twice uploads once. */
 const makeUploader = () => {
   const cache = new Map<string, Promise<string>>();
   return (dataUrl: string): Promise<string> => {
@@ -24,11 +23,9 @@ const makeUploader = () => {
 };
 
 /**
- * Resolves a post payload's images just before saving: any base64 cover or
- * inline editor image is uploaded to Cloudinary and swapped for its URL, so the
- * post request carries only URLs (no megabytes of base64). Already-hosted
- * `http` URLs — e.g. when editing an existing post — are left untouched, which
- * is what lets the backend delete only the images that were actually removed.
+ * Uploads any base64 image in the payload and swaps it for its URL, so the save
+ * request carries no megabytes of base64. Already-hosted URLs pass through
+ * untouched — that's what lets the backend delete only what was really removed.
  */
 export const resolvePostImages = async (
   payload: PostPayload,

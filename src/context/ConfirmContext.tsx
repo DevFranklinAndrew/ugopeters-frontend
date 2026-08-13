@@ -13,11 +13,7 @@ export type ConfirmFn = (options?: ConfirmOptions) => Promise<boolean>;
 
 export const ConfirmContext = createContext<ConfirmFn | undefined>(undefined);
 
-/**
- * Returns an imperative `confirm(options) => Promise<boolean>` — a drop-in,
- * accessible replacement for `window.confirm`. Backed by a single dialog from
- * <ConfirmProvider>, which must be mounted above the caller.
- */
+/** An accessible, awaitable stand-in for `window.confirm`. */
 export const useConfirm = (): ConfirmFn => {
   const ctx = useContext(ConfirmContext);
   if (!ctx)

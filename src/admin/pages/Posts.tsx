@@ -28,12 +28,11 @@ const Posts = () => {
   const [category, setCategory] = useState("All");
   const [page, setPage] = useState(1);
 
-  // Debounce the search term so keystrokes don't fire a request each time.
+  // Debounced so typing doesn't fire a request per keystroke.
   const debouncedQuery = useDebouncedValue(query.trim(), 300);
 
-  // The API handles search / filter / pagination — React Query keys off the
-  // params, so changing any of them refetches (and `keepPreviousData` in the
-  // hook avoids a flash between pages).
+  // Search, filter and paging all happen server-side; the query key is the
+  // params, so changing any of them refetches.
   const { data, isPending, isFetching, isError } = usePostList({
     page,
     limit: POSTS_PER_PAGE,
@@ -48,16 +47,15 @@ const Posts = () => {
   const totalPages = data?.pagination.totalPages ?? 1;
   const currentPage = data?.pagination.page ?? page;
 
-  // Keystrokes are debounced, so the request hasn't been fired yet while the
-  // typed term is ahead of the debounced one. Counting that as busy makes the
-  // spinner appear on the first keystroke instead of 300ms later.
+  // While the typed term is ahead of the debounced one no request has fired
+  // yet; counting that as busy shows the spinner on the first keystroke rather
+  // than 300ms later.
   const isSearchPending = query.trim() !== debouncedQuery;
-  // A refetch while previous results are still on screen (search, filter, page
-  // change). `isPending` covers only the very first load, which the list below
-  // renders as full-panel text instead.
+  // A refetch behind results already on screen. `isPending` is the first load
+  // only, which the list renders as full-panel text instead.
   const isRefreshing = (isFetching && !isPending) || isSearchPending;
 
-  // Snap back to the first page whenever the search or filter changes.
+  // Search and filter changes reset to page 1.
   const handleQuery = (value: string) => {
     setQuery(value);
     setPage(1);
@@ -90,9 +88,8 @@ const Posts = () => {
           <p className="text-foreground/50 mt-2 font-light flex items-center gap-2">
             {total} article{total !== 1 && "s"}
             {debouncedQuery || category !== "All" ? " matched." : " published."}
-            {/* The live region stays mounted so screen readers announce into
-                it; only its contents toggle, which also stops the spinner
-                animating while hidden. */}
+            {/* Stays mounted — a live region must exist before it can announce.
+                Only its contents toggle. */}
             <span
               aria-live="polite"
               className="inline-flex items-center gap-2 text-gold text-sm"
@@ -114,7 +111,6 @@ const Posts = () => {
         </Link>
       </header>
 
-      {/* Search + filter */}
       <div className="flex items-end gap-6 mb-8 max-mobile:flex-col max-mobile:items-stretch max-mobile:gap-4">
         <div className="flex items-center gap-3 border-b border-border focus-within:border-gold transition-colors flex-1 max-w-md">
           {/* The icon doubles as the search's own progress indicator. */}
@@ -147,8 +143,8 @@ const Posts = () => {
         </div>
       </div>
 
-      {/* List. While refreshing, the stale rows are dimmed and made inert so a
-          stray click can't act on a row that's about to be replaced. */}
+      {/* Stale rows go inert while refreshing, so a stray click can't act on a
+          row that's about to be replaced. */}
       <div
         aria-busy={isRefreshing || isPending}
         className={cn(
@@ -254,7 +250,6 @@ const Posts = () => {
         ))}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between gap-4 mt-8 max-mobile:flex-col">
           <p className="text-foreground/40 text-sm font-light">
@@ -262,8 +257,7 @@ const Posts = () => {
             {Math.min(currentPage * POSTS_PER_PAGE, total)} of {total}
           </p>
           <div className="flex items-center gap-2">
-            {/* Disabled mid-fetch so repeated clicks can't stack up requests
-                and land the user on a page they didn't mean to reach. */}
+            {/* Disabled mid-fetch, or stacked clicks overshoot the target page. */}
             <button
               onClick={() => setPage(currentPage - 1)}
               disabled={currentPage === 1 || isRefreshing}
@@ -284,7 +278,6 @@ const Posts = () => {
                     : "border-border text-foreground/50 hover:border-gold hover:text-gold disabled:opacity-30 disabled:hover:border-border disabled:hover:text-foreground/50",
                 )}
               >
-                {/* Spinner marks the page actually being loaded. */}
                 {isRefreshing && n === page && n !== currentPage ? (
                   <LuLoaderCircle size={14} className="animate-spin" />
                 ) : (

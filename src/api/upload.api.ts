@@ -9,11 +9,7 @@ interface UploadEnvelope {
   data: UploadResult;
 }
 
-/**
- * Uploads a single image to the backend (which stores it in Cloudinary and
- * returns the hosted URL). Sent as multipart/form-data under the `image` field;
- * the shared `api` instance already carries the admin auth cookie.
- */
+/** Uploads to the backend, which stores it in Cloudinary and returns the URL. */
 export const uploadImage = async (file: Blob): Promise<UploadResult> => {
   const form = new FormData();
   form.append("image", file, "image");

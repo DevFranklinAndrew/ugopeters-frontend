@@ -1,7 +1,6 @@
 import { api } from "../lib/api";
 import type { Post } from "../data/post";
 
-/** Query params accepted by `GET /api/posts` (server-side paging + filtering). */
 export interface PostListParams {
   page?: number;
   limit?: number;
@@ -10,7 +9,6 @@ export interface PostListParams {
   featured?: boolean;
 }
 
-/** Pagination metadata returned alongside a list of posts. */
 export interface PostPagination {
   page: number;
   limit: number;
@@ -23,19 +21,14 @@ export interface PostListResult {
   pagination: PostPagination;
 }
 
-/**
- * The client-supplied fields for create/update. The server owns the derived
- * fields (`slug`, `readTime`, `author`, and `excerpt` when blank), so they are
- * never sent from the CMS. `date` IS sent — it lets manual uploads be
- * back-dated — as `yyyy-mm-dd`; the server renders the display string from it.
- */
+/** Client-supplied fields only. `slug`, `readTime`, `author` and a blank
+ *  `excerpt` are server-derived; `date` is sent as `yyyy-mm-dd` for back-dating. */
 export type PostPayload = Pick<Post, "title" | "content" | "category" | "image"> & {
   excerpt?: string;
   featured?: boolean;
   date?: string;
 };
 
-/** Centralized React Query keys for the posts resource. */
 export const postsKeys = {
   all: ["posts"] as const,
   list: (params: PostListParams) => ["posts", "list", params] as const,
@@ -51,7 +44,6 @@ interface PostListEnvelope {
   data: PostListResult;
 }
 
-/** Serializes list params to a query string, dropping undefined/empty values. */
 const toQueryString = (params: PostListParams): string => {
   const search = new URLSearchParams();
   if (params.page !== undefined) search.set("page", String(params.page));

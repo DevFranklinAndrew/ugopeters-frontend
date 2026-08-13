@@ -9,14 +9,10 @@ import {
   submitMessage,
 } from "../api/messages.api";
 
-// The admin inbox fetches everything once, then sorts/filters/paginates on the
-// client (see Messages.tsx) — matching the useAdminPosts pattern.
+// The inbox fetches everything once, then filters/paginates client-side.
 const ADMIN_LIMIT = 1000;
 
-/**
- * Public contact-form submission. Feedback is the Contact page's "Inquiry
- * Received" screen, so no success toast here — only surface server errors.
- */
+/** No success toast: the Contact page shows its own "Inquiry Received" screen. */
 export const useSubmitMessage = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -28,7 +24,6 @@ export const useSubmitMessage = () => {
   });
 };
 
-/** All messages for the admin inbox. */
 export const useAdminMessages = () =>
   useQuery({
     queryKey: messagesKeys.admin(),
@@ -36,7 +31,7 @@ export const useAdminMessages = () =>
     select: (result) => result.messages,
   });
 
-/** Toggle read/unread. No success toast — this fires often (auto-read on open). */
+/** No success toast: this fires on every message open. */
 export const useMarkMessageRead = () => {
   const queryClient = useQueryClient();
   return useMutation({

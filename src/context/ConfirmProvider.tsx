@@ -6,11 +6,7 @@ import {
   type ConfirmOptions,
 } from "./ConfirmContext";
 
-/**
- * Provides the imperative `useConfirm()` API, backed by a single themed
- * <ConfirmDialog>. Mount once near the app root. UI state only — this is the
- * kind of state React Context is reserved for (alongside ThemeContext).
- */
+/** Backs `useConfirm()` with a single dialog. Mount once near the app root. */
 export const ConfirmProvider = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState<ConfirmOptions>({});
@@ -24,8 +20,7 @@ export const ConfirmProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
-  // `options` is intentionally kept after closing so the exit animation still
-  // renders its last content.
+  // `options` is deliberately left set, so the exit animation keeps its content.
   const close = (result: boolean) => {
     setOpen(false);
     resolverRef.current(result);

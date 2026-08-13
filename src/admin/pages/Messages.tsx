@@ -30,16 +30,15 @@ const Messages = () => {
   const del = useDeleteMessage();
   const confirm = useConfirm();
   const [searchParams] = useSearchParams();
-  // Deep link support: /admin/messages?msg=<id> opens that message directly
-  // (e.g. from the dashboard's "Recent Messages" list).
+  // ?msg=<id> deep-links straight to a message, e.g. from the dashboard.
   const initialMsg = searchParams.get("msg");
   const [selectedId, setSelectedId] = useState<string | null>(() => initialMsg);
   const [filter, setFilter] = useState<"all" | "unread">("all");
   const [reason, setReason] = useState("All");
   const [page, setPage] = useState(1);
 
-  // Auto-mark the deep-linked message read — but only once it's actually loaded
-  // and still unread, to avoid a redundant PATCH (or a 404 on a stale id).
+  // Guarded on loaded-and-unread: otherwise this PATCHes redundantly, or 404s
+  // on a stale id.
   useEffect(() => {
     if (!initialMsg) return;
     const msg = messages.find((m) => m.id === initialMsg);
@@ -83,8 +82,7 @@ const Messages = () => {
     setSelectedId(id);
     const msg = messages.find((m) => m.id === id);
     if (msg && !msg.read) markRead.mutate({ id, read: true });
-    // On the stacked mobile/tablet layout the list is replaced by the detail —
-    // bring it into view from the top.
+    // On the stacked layout the detail replaces the list, so scroll it into view.
     if (window.matchMedia("(max-width: 62.5em)").matches) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
@@ -118,7 +116,6 @@ const Messages = () => {
         </p>
       </header>
 
-      {/* Filter tabs + reason filter */}
       <div className="flex items-center justify-between gap-4 mb-8 flex-wrap">
         <div className="flex items-center gap-2">
           {(["all", "unread"] as const).map((f) => (
@@ -149,7 +146,6 @@ const Messages = () => {
       </div>
 
       <div className="grid grid-cols-[380px_1fr] max-tablet:grid-cols-1 gap-8 items-start">
-        {/* List */}
         <div className={cn(selected && "max-tablet:hidden")}>
           <div className="bg-card border border-border divide-y divide-border max-h-[70vh] overflow-y-auto">
             {isPending && (
@@ -214,7 +210,6 @@ const Messages = () => {
           />
         </div>
 
-        {/* Detail */}
         <div
           className={cn(
             "bg-card border border-border flex flex-col overflow-hidden tablet:sticky tablet:top-8 tablet:self-start tablet:max-h-[calc(100vh-4rem)] tablet:min-h-150",
@@ -234,7 +229,6 @@ const Messages = () => {
               transition={{ duration: 0.3 }}
               className="flex flex-col min-h-0 flex-1 overflow-hidden"
             >
-              {/* Mobile back to inbox */}
               <button
                 onClick={() => setSelectedId(null)}
                 className="tablet:hidden flex items-center gap-2 px-6 pt-6 text-foreground/50 hover:text-gold transition-colors text-[10px] uppercase tracking-widest font-bold group shrink-0"
@@ -246,7 +240,6 @@ const Messages = () => {
                 Back to inbox
               </button>
 
-              {/* Header (fixed) */}
               <div className="px-8 pt-6 pb-5 max-mobile:px-6 border-b border-border shrink-0">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
@@ -297,7 +290,6 @@ const Messages = () => {
                 </div>
               </div>
 
-              {/* Body (scrolls independently for long messages) */}
               <div className="p-8 max-mobile:px-6 overflow-y-auto grow min-h-0">
                 <p className="text-foreground/70 text-lg leading-relaxed font-light whitespace-pre-wrap wrap-break-word">
                   {selected.message}

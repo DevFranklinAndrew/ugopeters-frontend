@@ -6,7 +6,6 @@ import image from "../assets/Ugo_Peters_Pic3.jpg";
 const About = () => {
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
       <section className="pt-48 max-medium-tablet:pt-32 max-medium-tablet:pb-20 pb-32 px-12 max-mobile:px-4 bg-muted/5">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 max-medium-tablet:grid-cols-1 gap-20 items-center">
@@ -112,7 +111,6 @@ const About = () => {
           </div>
         </div>
       </section>
-      {/* Narrative Section */}
       <section className="py-32 px-12 max-tablet:py-24 max-mobile:px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 max-medium-tablet:grid-cols-1 max-medium-tablet:gap-16 gap-24">
@@ -144,7 +142,6 @@ const About = () => {
           </div>
         </div>
       </section>
-      {/* Purpose Section */}
       <section className="py-32 px-12 max-tablet:py-24 max-mobile:px-4 bg-foreground text-background">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 gap-16 items-center max-medium-tablet:grid-cols-1">
@@ -193,7 +190,6 @@ const About = () => {
           </div>
         </div>
       </section>
-      {/* Approach & Philosophy Section */}
       <section className="py-32 px-12 max-tablet:py-24 max-mobile:px-4">
         <div className="max-w-6xl mx-auto">
           <div className="mb-24 max-tablet:mb-16 text-center">

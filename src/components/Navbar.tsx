@@ -28,12 +28,11 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close the mobile menu whenever the route changes.
   useEffect(() => {
     setIsOpen(false);
   }, [location.pathname]);
 
-  // While the mobile menu is open, lock body scroll and allow Escape to close.
+  // While the menu is open, lock body scroll and let Escape close it.
   useEffect(() => {
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -115,18 +114,14 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Rendered into <body> via a portal, NOT inside <nav>. Once scrolled, the
-          nav gains `backdrop-blur-md`, and an element with a backdrop-filter
-          becomes the containing block for its `position: fixed` descendants —
-          which would collapse this overlay and sidebar into the ~62px nav box
-          instead of the viewport. The portal keeps them anchored to the viewport
-          at any scroll position. They sit above the nav's own z-50 so the bar is
-          dimmed along with the page. */}
+      {/* Portalled out of <nav> deliberately: once scrolled the nav gains
+          `backdrop-blur-md`, and a backdrop-filter makes an element the
+          containing block for its fixed descendants — which would collapse the
+          overlay and sidebar into the ~62px nav box instead of the viewport. */}
       {createPortal(
         <AnimatePresence>
           {isOpen && (
             <>
-              {/* Dimmed, blurred overlay — click to dismiss */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -136,7 +131,6 @@ const Navbar = () => {
                 className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm hidden max-small-tablet:block"
               />
 
-              {/* Left slide-in sidebar */}
               <motion.aside
                 initial={{ x: "-100%" }}
                 animate={{ x: 0 }}
@@ -147,7 +141,6 @@ const Navbar = () => {
                 aria-label="Navigation menu"
                 className="fixed inset-y-0 left-0 z-[70] w-72 max-small-mobile:w-full bg-background border-r border-border shadow-2xl shadow-black/20 hidden max-small-tablet:flex flex-col"
               >
-                {/* Header: logo + close */}
                 <div className="flex items-center justify-between px-6 py-4 border-b border-border">
                   <img
                     src={theme === "light" ? Udark : ULight}
@@ -163,7 +156,6 @@ const Navbar = () => {
                   </button>
                 </div>
 
-                {/* Links */}
                 <div className="flex flex-col gap-1 p-4 grow">
                   {navLinks.map((link) => (
                     <Link
@@ -182,7 +174,6 @@ const Navbar = () => {
                   ))}
                 </div>
 
-                {/* Footer CTA */}
                 <div className="p-4 border-t border-border">
                   <Link
                     to="/contact"

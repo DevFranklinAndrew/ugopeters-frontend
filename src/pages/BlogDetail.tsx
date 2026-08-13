@@ -46,8 +46,7 @@ const BlogDetail = () => {
     restDelta: 0.001,
   });
 
-  // Related pools — same-category first, topped up with recent posts. Both are
-  // fetched here; they only become meaningful once `post` (its category) loads.
+  // Two pools for the "related" strip below; both need `post` to have loaded.
   const categoryQuery = usePostList({ category: post?.category, limit: 7 });
   const recentQuery = usePostList({ limit: 7 });
 
@@ -94,7 +93,7 @@ const BlogDetail = () => {
     }
   };
 
-  // Prefer posts in the same category; top up with other recent posts.
+  // Same-category posts first, topped up with recent ones.
   const sameCategory = (categoryQuery.data?.posts ?? []).filter(
     (p) => p.slug !== post.slug && p.category === post.category,
   );
@@ -113,7 +112,6 @@ const BlogDetail = () => {
         style={{ scaleX: progress }}
         className="fixed top-0 left-0 right-0 h-1 bg-gold origin-left z-50"
       />
-      {/* Hero Section */}
       <section className="pt-48 max-tablet:pt-32 max-tablet:pb-24 max-mobile:px-4 pb-32 px-12 bg-muted/5">
         <div className="max-w-4xl mx-auto">
           <motion.header
@@ -177,7 +175,6 @@ const BlogDetail = () => {
           </motion.header>
         </div>
       </section>
-      {/* Featured Image */}
       <section className="px-12 max-mobile:px-4 -mt-20 max-mobile:-mt-10 relative z-10">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -196,7 +193,6 @@ const BlogDetail = () => {
         </div>
       </section>
 
-      {/* Article Content */}
       <div className="py-32 max-tablet:py-20 max-mobile:pt-10 max-mobile:px-4 px-12">
         <div className="max-w-3xl mx-auto">
           <motion.div
@@ -212,7 +208,6 @@ const BlogDetail = () => {
             />
           </motion.div>
 
-          {/* Footer CTA */}
           <footer className="mt-32 max-medium-mobile:mt-24 pt-16 border-t border-border">
             <div className="bg-muted/5 p-16 max-small-tablet:px-6 border-l-4 border-gold relative overflow-hidden group">
               <div className="relative z-10">
@@ -253,7 +248,6 @@ const BlogDetail = () => {
         </div>
       </div>
 
-      {/* Related Articles */}
       {relatedPosts.length > 0 && (
         <section className="pb-32 max-tablet:pb-20 px-12 max-mobile:px-4 bg-muted/5 pt-24 max-tablet:pt-16 border-t border-border">
           <div className="max-w-6xl mx-auto">

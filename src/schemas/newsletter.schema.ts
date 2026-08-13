@@ -1,10 +1,7 @@
 import { z } from "zod";
 
-/**
- * Mirrors the backend subscribe validation
- * (backend/src/validations/subscriber.validation.ts) so client-side errors
- * match what the server would reject.
- */
+/** Keep in sync with backend/src/validations/subscriber.validation.ts, so the
+ *  client rejects exactly what the server would. */
 export const newsletterSchema = z.object({
   email: z
     .string()

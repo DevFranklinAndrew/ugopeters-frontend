@@ -9,15 +9,11 @@ const Layout = () => {
     <div className="min-h-screen flex flex-col selection:bg-gold selection:text-black">
       <Navbar />
       <main className="grow">
-        {/* A plain opacity fade on the incoming page.
-            - No y-offset: the slide is what read as a jump/bounce. Animating
-              opacity alone also stops motion from writing a `transform` here,
-              which would otherwise make this the containing block for any
-              `position: fixed` element rendered inside a page.
-            - No AnimatePresence/exit: `<Outlet />` resolves against the router's
-              *current* route, so an exiting wrapper would re-render showing the
-              NEW page's content — the outgoing page would flash the new content
-              before fading. A fade-in on the incoming page avoids that entirely. */}
+        {/* Opacity only, and no exit animation — both deliberate:
+            - A y-offset reads as a bounce, and any transform here would make
+              this the containing block for fixed elements inside a page.
+            - `<Outlet />` resolves against the router's *current* route, so an
+              exiting wrapper would flash the new page's content before fading. */}
         <motion.div
           key={location.pathname}
           initial={{ opacity: 0 }}

@@ -57,7 +57,6 @@ const Contact = () => {
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
       <section className="pt-48 pb-32 max-medium-tablet:pt-32 max-medium-tablet:pb-20 px-12 bg-muted/5 max-mobile:px-4">
         <div className="max-w-6xl mx-auto">
           <motion.div
@@ -80,11 +79,9 @@ const Contact = () => {
           </motion.div>
         </div>
       </section>
-      {/* Contact Content */}
       <section className="py-32 px-12 max-tablet:py-24 max-mobile:px-4">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 gap-24 max-tablet:gap-12 max-tablet:grid-cols-1">
-            {/* Contact Info */}
             <div>
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
@@ -114,19 +111,6 @@ const Contact = () => {
                           </a>
                         </div>
                       </div>
-                      {/* <div className="flex items-start gap-6 group">
-                        <div className="w-12 h-12 border border-gold/20 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-black transition-all shrink-0">
-                          <Phone size={20} />
-                        </div>
-                        <div>
-                          <p className="text-[10px] uppercase tracking-widest font-bold text-foreground/40 mb-1">
-                            Direct Line
-                          </p>
-                          <p className="text-2xl font-serif">
-                            +44 (0) 20 7946 0123
-                          </p>
-                        </div>
-                      </div> */}
                       <div className="flex items-start gap-6 group">
                         <div className="w-12 h-12 border border-gold/20 flex items-center justify-center text-gold group-hover:bg-gold group-hover:text-black transition-all shrink-0">
                           <LuMapPin size={20} />
@@ -187,7 +171,6 @@ const Contact = () => {
               </motion.div>
             </div>
 
-            {/* Contact Form Container */}
             <div>
               <motion.div
                 initial={{ opacity: 0, x: 30 }}
@@ -342,7 +325,6 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Location Section */}
       <section className="h-125 max-mobile:h-72 bg-muted/10 relative overflow-hidden opacity-50 hover:opacity-100 transition-all duration-1000">
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">

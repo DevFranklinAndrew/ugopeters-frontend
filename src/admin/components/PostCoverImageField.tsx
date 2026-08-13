@@ -3,18 +3,13 @@ import { LuUpload } from "react-icons/lu";
 import { cn } from "../../lib/utils";
 
 interface PostCoverImageFieldProps {
-  /** Current image (base64 data URL or external URL); empty when unset. */
+  /** A base64 data URL or a hosted one; empty when unset. */
   image: string;
-  /** Whether the field is in an error state (drives the empty-state styling). */
   hasError?: boolean;
   onFileChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-/**
- * Cover-image picker: shows a preview with a hover "Replace" action once an
- * image is chosen, otherwise an upload dropzone. The chosen file is read into a
- * base64 data URL by the caller's `onFileChange` handler.
- */
+/** Preview with a hover "Replace" once an image is set, dropzone before that. */
 const PostCoverImageField = ({
   image,
   hasError,

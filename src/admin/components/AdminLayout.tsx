@@ -127,12 +127,10 @@ const AdminLayout = () => {
 
   return (
     <div className="min-h-screen flex bg-background selection:bg-gold selection:text-black">
-      {/* Desktop sidebar */}
       <aside className="w-72 shrink-0 border-r border-border bg-card fixed inset-y-0 left-0 max-medium-tablet:hidden">
         <SidebarContent {...sidebarProps} />
       </aside>
 
-      {/* Mobile sidebar */}
       <AnimatePresence>
         {mobileOpen && (
           <>
@@ -156,9 +154,7 @@ const AdminLayout = () => {
         )}
       </AnimatePresence>
 
-      {/* Main content */}
       <div className="flex-1 ml-72 max-medium-tablet:ml-0 flex flex-col min-w-0">
-        {/* Mobile top bar */}
         <div className="hidden max-medium-tablet:flex items-center justify-between px-4 py-4 border-b border-border bg-card sticky top-0 z-30">
           <span className="font-serif text-xl font-bold">
             Ugo<span className="text-gold">.</span>Admin

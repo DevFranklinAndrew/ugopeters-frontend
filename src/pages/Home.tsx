@@ -78,10 +78,8 @@ const ventures = [
 const Home = () => {
   return (
     <div className="flex flex-col">
-      {/* Hero Section */}
-      {/* `py-28` is symmetric so the centered composition is unchanged, but it
-          guarantees the content always clears the fixed navbar (~72px) once the
-          section is only as tall as the viewport and the content overflows. */}
+      {/* `py-28` is symmetric, so it keeps the composition centered while still
+          clearing the fixed navbar (~72px) when the section shrinks to 100vh. */}
       <section className="relative min-h-[140vh] max-small-desktop:min-h-[125vh] max-tablet:min-h-screen flex items-center py-28 max-medium-tablet:pt-32 max-medium-tablet:pb-24 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
@@ -154,7 +152,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-      {/* What I do */}
       <section className="py-32 max-tablet:py-24 px-12 max-mobile:px-4 bg-muted/5">
         <div className="max-w-6xl mx-auto">
           <div className="mb-24 max-tablet:mb-16">
@@ -188,7 +185,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-      {/* Ventures & Platforms */}
       <section className="max-tablet:py-24 py-32 px-12 max-mobile:px-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap justify-between items-end mb-24 max-tablet:mb-16 gap-8">
@@ -260,7 +256,6 @@ const Home = () => {
           </div>
         </div>
       </section>
-      {/* Impact Section */}
       <section className="max-tablet:py-24 py-32 px-12 max-mobile:px-4 bg-muted/5">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 max-small-tablet:grid-cols-1 gap-16 items-center">

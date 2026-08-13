@@ -81,7 +81,6 @@ const Overview = () => {
         </Link>
       </header>
 
-      {/* Stat cards */}
       <div className="grid grid-cols-4 max-tablet:grid-cols-2 max-small-mobile:grid-cols-1 gap-6 mb-16">
         {stats.map((stat, i) => (
           <motion.div
@@ -115,7 +114,6 @@ const Overview = () => {
         ))}
       </div>
 
-      {/* Recent messages */}
       <section>
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-serif font-bold">Recent Messages</h2>

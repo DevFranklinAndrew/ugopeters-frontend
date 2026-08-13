@@ -39,7 +39,6 @@ const PostView = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      {/* Top bar: back + actions */}
       <div className="flex items-center justify-between gap-4 mb-12 max-mobile:flex-col max-mobile:items-start">
         <Link
           to="/admin/posts"
@@ -70,7 +69,6 @@ const PostView = () => {
         </div>
       </div>
 
-      {/* Meta */}
       <div className="flex items-center gap-3 mb-6 text-xs uppercase tracking-widest font-bold">
         <span className="px-4 py-1 border border-gold/20 rounded-full text-gold">
           {post.category}
@@ -101,7 +99,6 @@ const PostView = () => {
         </div>
       </div>
 
-      {/* Cover image */}
       {post.image && (
         <div className="aspect-video overflow-hidden border border-border mb-12">
           <img
@@ -113,12 +110,10 @@ const PostView = () => {
         </div>
       )}
 
-      {/* Excerpt */}
       <p className="text-foreground/60 text-xl font-serif italic leading-relaxed mb-12">
         {post.excerpt}
       </p>
 
-      {/* Content */}
       <div
         className="blog-content text-foreground/70 text-lg leading-relaxed font-light space-y-6"
         dangerouslySetInnerHTML={{ __html: post.content }}

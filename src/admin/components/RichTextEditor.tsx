@@ -26,9 +26,8 @@ import {
 } from "react-icons/lu";
 import { cn } from "../../lib/utils";
 
-// By default Tiptap marks are "inclusive": typing right after a styled run
-// keeps the style, which reads as the style bleeding into adjacent text. Making
-// them non-inclusive confines a mark to exactly the selection it was applied to.
+// Tiptap marks are inclusive by default, so typing after a styled run keeps the
+// style — it reads as bleeding. Non-inclusive confines a mark to its selection.
 const NonInclusiveBold = Bold.extend({ inclusive: false });
 const NonInclusiveItalic = Italic.extend({ inclusive: false });
 const NonInclusiveUnderline = Underline.extend({ inclusive: false });
@@ -37,7 +36,6 @@ interface RichTextEditorProps {
   value: string;
   onChange: (html: string) => void;
   placeholder?: string;
-  /** Renders the toolbar + editor with a red border on validation error. */
   invalid?: boolean;
 }
 
@@ -50,11 +48,9 @@ const editorClass = (invalid?: boolean) =>
   );
 
 /**
- * Sanitizes HTML entering the editor (initial content + pastes from the web).
- * Web copies carry invisible artifacts — empty footnote `<sup></sup>` tags,
- * empty inline wrappers, and non-breaking spaces — that occupy real document
- * positions, so the visual selection drifts from the actual positions and marks
- * appear to "grab" adjacent text. Stripping them keeps selections predictable.
+ * Sanitizes HTML entering the editor, including web pastes. Their invisible
+ * artifacts still occupy document positions, which drifts the visual selection
+ * from the real one and makes marks appear to grab adjacent text.
  */
 const cleanHtml = (html: string): string =>
   html
@@ -62,7 +58,7 @@ const cleanHtml = (html: string): string =>
     .replace(/<(sup|sub|span|strong|em|b|i|u|mark)\b[^>]*>\s*<\/\1>/gi, "")
     // Superscript/subscript aren't supported here — unwrap, keeping any text.
     .replace(/<\/?(?:sup|sub)\b[^>]*>/gi, "")
-    // Non-breaking spaces read like normal spaces but break word selection.
+    // Non-breaking spaces look like spaces but break word selection.
     .replace(/&nbsp;|\u00A0/g, " ");
 
 const buildEditorProps = (invalid?: boolean) => ({
@@ -284,8 +280,8 @@ const RichTextEditor = ({
         bold: false,
         italic: false,
         underline: false,
-        // Link ships with StarterKit v3 — configure it here instead of adding a
-        // second Link extension (which would duplicate-register).
+        // Configured here because StarterKit v3 ships Link; adding a second
+        // Link extension would duplicate-register it.
         link: {
           openOnClick: false,
           HTMLAttributes: { rel: "noopener noreferrer", target: "_blank" },
@@ -302,16 +298,16 @@ const RichTextEditor = ({
         placeholder: placeholder ?? "Write your article...",
       }),
     ],
-    // Init-once: the editor is uncontrolled after mount. Switching posts remounts
-    // it via the `key` on PostEditorForm, so there's no value→setContent sync
-    // loop (which would rebuild the doc and drop the selection mid-edit).
+    // Set once — the editor is uncontrolled after mount, and PostEditorForm's
+    // `key` remounts it per post. Syncing value→setContent instead would rebuild
+    // the doc and drop the selection mid-edit.
     content: cleanHtml(value),
     onUpdate: ({ editor }) => onChange(editor.getHTML()),
     editorProps: buildEditorProps(invalid),
   });
 
-  // editorProps is fixed at init, so re-apply it when `invalid` flips (this
-  // preserves the paste sanitizer, which setOptions would otherwise drop).
+  // editorProps is fixed at init, so re-apply on an `invalid` flip. Rebuilding
+  // the whole object also preserves the paste sanitizer.
   useEffect(() => {
     editor?.setOptions({ editorProps: buildEditorProps(invalid) });
   }, [editor, invalid]);
@@ -325,8 +321,8 @@ const RichTextEditor = ({
       window.alert("Please choose an image file.");
       return;
     }
-    // No upload backend yet — embed the image inline as a base64 data URL.
-    // When the API is wired up, swap this for an upload call that returns a URL.
+    // Embedded as base64 for an instant preview; resolvePostImages swaps it for
+    // a Cloudinary URL at save time.
     const reader = new FileReader();
     reader.onload = () => {
       const src = reader.result as string;

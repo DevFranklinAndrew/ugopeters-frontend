@@ -15,18 +15,15 @@ import {
   type PostFormValues,
 } from "../schemas/post.schema";
 
-/**
- * All the stateful behavior behind the post editor: form setup + validation,
- * the create/update mutations, cover-image upload, and navigation on success.
- * The form component stays purely presentational.
- */
+/** Holds everything stateful behind the post editor, so PostEditorForm can stay
+ *  presentational. */
 export const usePostForm = (existing?: Post) => {
   const navigate = useNavigate();
   const createPost = useCreatePost();
   const updatePost = useUpdatePost();
 
   const isEditing = Boolean(existing);
-  // Uploading pending images to Cloudinary happens before the mutation runs.
+  // Images upload before the mutation runs, so saving spans both.
   const [isUploading, setIsUploading] = useState(false);
   const isSaving =
     isUploading || createPost.isPending || updatePost.isPending;
@@ -47,8 +44,8 @@ export const usePostForm = (existing?: Post) => {
       window.alert("Please choose an image file.");
       return;
     }
-    // Store the cover as a base64 data URL for an instant preview; it's uploaded
-    // to Cloudinary (and swapped for its URL) at save time by resolvePostImages.
+    // Base64 for an instant preview; resolvePostImages swaps it for a Cloudinary
+    // URL at save time.
     const reader = new FileReader();
     reader.onload = () =>
       setValue("image", reader.result as string, { shouldValidate: true });
@@ -62,13 +59,13 @@ export const usePostForm = (existing?: Post) => {
       category: values.category,
       image: values.image,
       featured: values.featured,
-      // Optional — omit when blank so the server derives it from the content.
+      // Omitted when blank, so the server derives it from the content.
       excerpt: values.excerpt?.trim() || undefined,
-      // `date` is deliberately not sent: the CMS no longer edits it, so the
-      // server dates new posts itself and an edit leaves the date untouched.
+      // `date` is deliberately absent: the CMS doesn't edit it, so the server
+      // dates new posts and an edit leaves the existing date alone.
     };
 
-    // Upload any base64 cover/inline images first so the post carries only URLs.
+    // Resolved first, so the request carries URLs rather than megabytes of base64.
     let payload: PostPayload;
     setIsUploading(true);
     try {

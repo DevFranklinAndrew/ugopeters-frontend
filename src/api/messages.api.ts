@@ -1,10 +1,7 @@
 import { api } from "../lib/api";
 
-/**
- * A contact-form submission. Mirrors the backend `toPublicMessage` shape
- * (backend/src/controllers/message.controller.ts). This is the single source of
- * truth for the message type across the app (public form + admin inbox).
- */
+/** Mirrors the backend `toPublicMessage`; the app's single source of truth for
+ *  this type, used by both the public form and the admin inbox. */
 export interface ContactMessage {
   id: string;
   name: string;
@@ -16,13 +13,11 @@ export interface ContactMessage {
   createdAt: string; // ISO string
 }
 
-/** The client-supplied fields for the public contact form. */
 export type ContactMessageInput = Pick<
   ContactMessage,
   "name" | "email" | "reason" | "subject" | "message"
 >;
 
-/** Query params accepted by `GET /api/messages` (server-side paging + filtering). */
 export interface MessageListParams {
   page?: number;
   limit?: number;
@@ -30,7 +25,6 @@ export interface MessageListParams {
   read?: boolean;
 }
 
-/** Pagination metadata returned alongside a list of messages. */
 export interface MessagePagination {
   page: number;
   limit: number;
@@ -43,7 +37,6 @@ export interface MessageListResult {
   pagination: MessagePagination;
 }
 
-/** Centralized React Query keys for the messages resource. */
 export const messagesKeys = {
   all: ["messages"] as const,
   list: (params: MessageListParams) => ["messages", "list", params] as const,
@@ -57,7 +50,6 @@ interface MessageListEnvelope {
   data: MessageListResult;
 }
 
-/** Serializes list params to a query string, dropping undefined values. */
 const toQueryString = (params: MessageListParams): string => {
   const search = new URLSearchParams();
   if (params.page !== undefined) search.set("page", String(params.page));
@@ -68,7 +60,6 @@ const toQueryString = (params: MessageListParams): string => {
   return qs ? `?${qs}` : "";
 };
 
-/** Public contact-form submission. */
 export const submitMessage = async (
   payload: ContactMessageInput,
 ): Promise<ContactMessage> => {
@@ -76,7 +67,6 @@ export const submitMessage = async (
   return data.data.message;
 };
 
-/** Admin inbox list (paginated + filterable). */
 export const fetchMessages = async (
   params: MessageListParams = {},
 ): Promise<MessageListResult> => {
@@ -86,7 +76,6 @@ export const fetchMessages = async (
   return data.data;
 };
 
-/** Admin: toggle a message's read status. */
 export const markMessageRead = async (
   id: string,
   read: boolean,
@@ -95,7 +84,6 @@ export const markMessageRead = async (
   return data.data.message;
 };
 
-/** Admin: delete a message. */
 export const deleteMessage = async (id: string): Promise<void> => {
   await api.delete(`/messages/${id}`);
 };

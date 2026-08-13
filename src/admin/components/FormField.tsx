@@ -21,7 +21,6 @@ interface FormFieldProps {
   className?: string;
 }
 
-/** A labeled form row that renders its control and an optional inline error. */
 export const FormField = ({
   label,
   error,
@@ -35,7 +34,6 @@ export const FormField = ({
   </div>
 );
 
-/** Text input styled to the app's underlined field convention. */
 export const TextInput = forwardRef<
   HTMLInputElement,
   InputHTMLAttributes<HTMLInputElement> & { error?: boolean }
@@ -53,7 +51,6 @@ export const TextInput = forwardRef<
 ));
 TextInput.displayName = "TextInput";
 
-/** Textarea variant of {@link TextInput}. */
 export const TextArea = forwardRef<
   HTMLTextAreaElement,
   TextareaHTMLAttributes<HTMLTextAreaElement> & { error?: boolean }
