@@ -1,3 +1,29 @@
+/** Widest window we ever show, and the narrowest that still fits first +
+ *  current + last around two elisions. Both odd, so the window stays centred. */
+const MAX_SLOTS = 7;
+const MIN_SLOTS = 5;
+
+/**
+ * How many number slots fit in `available` px, given the rendered slot and gap
+ * size. The row is 2 arrows + N slots with N+1 gaps between them, so
+ *
+ *   (N + 2)·slot + (N + 1)·gap <= available
+ *
+ * Elisions are narrower than a slot, so treating them as full width errs
+ * toward fitting. Returns MAX_SLOTS before the first measurement lands.
+ */
+export const slotsThatFit = (
+  available: number,
+  slot: number,
+  gap: number,
+): number => {
+  if (available <= 0) return MAX_SLOTS;
+
+  const n = Math.floor((available - 2 * slot - gap) / (slot + gap));
+  const clamped = Math.max(MIN_SLOTS, Math.min(MAX_SLOTS, n));
+  return clamped % 2 === 0 ? clamped - 1 : clamped;
+};
+
 const range = (from: number, to: number): number[] =>
   Array.from({ length: to - from + 1 }, (_, i) => from + i);
 

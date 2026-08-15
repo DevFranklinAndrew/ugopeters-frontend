@@ -1,6 +1,8 @@
+import { useRef } from "react";
 import { LuChevronLeft, LuChevronRight, LuLoaderCircle } from "react-icons/lu";
+import { useAvailableWidth } from "../hooks/useAvailableWidth";
 import { useMediaQuery } from "../hooks/useMediaQuery";
-import { pageItems } from "../lib/pagination";
+import { pageItems, slotsThatFit } from "../lib/pagination";
 import { cn } from "../lib/utils";
 
 interface PaginationProps {
@@ -20,6 +22,8 @@ interface PaginationProps {
 // Matches --breakpoint-small-mobile (30em) in index.css. Keep the two in sync.
 const NARROW = "(max-width: 30em)";
 
+// `px` mirrors what the classes above actually render, per breakpoint — the
+// fitting maths needs real numbers. Keep the two columns in step.
 const SIZES = {
   sm: {
     slot: "w-10 h-10 max-small-mobile:w-8 max-small-mobile:h-8",
@@ -28,6 +32,7 @@ const SIZES = {
     elision: "w-4",
     chevron: 16,
     spinner: 14,
+    px: { wide: { slot: 40, gap: 8 }, narrow: { slot: 32, gap: 4 } },
   },
   lg: {
     slot: "w-12 h-12 max-small-mobile:w-9 max-small-mobile:h-9",
@@ -36,6 +41,7 @@ const SIZES = {
     elision: "w-6 max-small-mobile:w-4",
     chevron: 20,
     spinner: 14,
+    px: { wide: { slot: 48, gap: 12 }, narrow: { slot: 36, gap: 6 } },
   },
 } as const;
 
@@ -49,9 +55,15 @@ const Pagination = ({
   size = "sm",
   className,
 }: PaginationProps) => {
-  // The slot budget is what makes this responsive — shrinking the buttons
-  // alone still left every number on screen.
-  const maxSlots = useMediaQuery(NARROW) ? 5 : 7;
+  const navRef = useRef<HTMLElement>(null);
+  const available = useAvailableWidth(navRef);
+  const narrow = useMediaQuery(NARROW);
+
+  // Fitted to the space actually on offer, so the same control adapts to a
+  // phone, a sidebar-narrowed admin table and a full-width blog alike —
+  // rather than to two guessed breakpoints.
+  const { slot, gap } = SIZES[size].px[narrow ? "narrow" : "wide"];
+  const maxSlots = slotsThatFit(available, slot, gap);
 
   if (totalPages <= 1) return null;
 
@@ -63,6 +75,7 @@ const Pagination = ({
 
   return (
     <nav
+      ref={navRef}
       aria-label="Pagination"
       className={cn("flex items-center max-w-full overflow-x-auto", s.gap, className)}
     >
